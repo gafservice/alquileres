@@ -1,9 +1,8 @@
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import smtplib
 from email.message import EmailMessage
-
 
 st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered") 
 

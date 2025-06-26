@@ -81,6 +81,18 @@ if st.button("Enviar solicitud"):
 
         df = pd.DataFrame([form_data])
         df.to_csv("respuestas_alquiler.csv", mode='a', index=False, header=False)
+
+        msg["From"] = "geenarfa@gmail.com"
+        msg["To"] = "geenarfa@gmail.com"
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login("geenarfa@gmail.com", "bvws himz lgdz acit ")
+        server.send_message(msg)
+
+
+
+        
         st.success("✅ ¡Solicitud enviada con éxito!")
 
         if archivo:

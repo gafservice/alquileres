@@ -9,10 +9,10 @@ st.title("📋 Formulario de Solicitud de Alquiler – Habitacional / Comercial 
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
-    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler.
-    Todos los datos personales, referencias y documentos adjuntos podrán ser verificados.
-    No será compartida sin su autorización y será almacenada de forma segura, conforme a la Ley 8968.
-    Si no se formaliza el contrato, los datos serán eliminados dentro de un plazo razonable.\n\n"
+    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler."
+    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados."
+    "No será compartida sin su autorización y será almacenada de forma segura, conforme a la Ley 8968."
+    "Si no se formaliza el contrato, los datos serán eliminados dentro de un plazo razonable."
     "Al continuar, usted acepta estos términos."
 )
 

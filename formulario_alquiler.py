@@ -79,9 +79,12 @@ if st.button("Enviar solicitud"):
 
         # ✅ Guardar en Google Sheets
         try:
+            # ✅ Guardar en Google Sheets
+        try:
             scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-            credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+            credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1  # Asegurate de tener este nombre de archivo
             sheet.append_row(list(form_data.values()))

@@ -1,30 +1,28 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 import smtplib
+import json
 from email.message import EmailMessage
+from datetime import datetime
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
-st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered") 
-
+# Configuración inicial
+st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered")
 st.title("📋 Formulario de Solicitud de Alquiler:  Habitacional / Comercial / Mixto")
-
 st.image("fachada.jpeg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
-
-
-
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
-    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler."
-    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados."
-    "No será compartida sin su autorización y será almacenada de forma segura, conforme a la Ley 8968."
+    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
+    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
+    "No será compartida sin su autorización y será almacenada de forma segura, conforme a la Ley 8968. "
     "Si no se formaliza el contrato, los datos serán eliminados dentro de un plazo razonable.\n\n"
     "Al continuar, usted acepta estos términos."
 )
 
 # Selección inicial
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
-
 form_data = {}
 
 # --- Sección Habitacional ---
@@ -53,7 +51,6 @@ if uso in ["Uso comercial", "Uso mixto"]:
 
 # --- Sección Final Común ---
 st.header("🔒 Sección Final y Declaración")
-
 form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
 form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
@@ -65,50 +62,52 @@ form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los s
                                        ["El inquilino", "El propietario", "A convenir entre ambas partes"])
 form_data["Observaciones"] = st.text_area("Observaciones adicionales")
 
-# Declaraciones
 form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
 form_data["Consentimiento datos"] = st.checkbox("Autorizo el uso y eventual verificación de mis datos personales, y acepto su eliminación si no se formaliza un contrato.", value=False)
 
-# Subir archivo opcional (foto o documento)
 archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
 
-# Guardar y exportar
+# --- Guardar al enviar
 if st.button("Enviar solicitud"):
     if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:
         st.error("Debe aceptar ambas declaraciones para continuar.")
     else:
         form_data["Tipo de uso"] = uso
         form_data["Fecha de envío"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
         df = pd.DataFrame([form_data])
         df.to_csv("respuestas_alquiler.csv", mode='a', index=False, header=False)
 
-        # CORREO: construir y enviar
-        msg = EmailMessage()
-        msg["Subject"] = "📝 Nueva solicitud de alquiler"
-        msg["From"] = "geenarfa@gmail.com"
-        msg["To"] = "geenarfa@gmail.com"
-       
-        # Cuerpo HTML del correo
-        contenido_html = "<h3>📋 Nueva solicitud de alquiler</h3><ul>"
-        for clave, valor in form_data.items():
-            contenido_html += f"<li><strong>{clave}:</strong> {valor}</li>"
-        contenido_html += "</ul>"
-
-        msg.set_content("Este correo requiere un cliente que soporte HTML.")
-        msg.add_alternative(contenido_html, subtype="html")
-
+        # ✅ Guardar en Google Sheets
         try:
+            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+            credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+            client = gspread.authorize(creds)
+            sheet = client.open("Respuestas_Alquiler").sheet1  # Asegurate de tener este nombre de archivo
+            sheet.append_row(list(form_data.values()))
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
+        # ✅ Enviar correo
+        try:
+            msg = EmailMessage()
+            msg["Subject"] = "Nueva solicitud de alquiler"
+            msg["From"] = "geenarfa@gmail.com"
+            msg["To"] = "geenarfa@gmail.com"
+            msg.set_content("\n".join([f"{k}: {v}" for k, v in form_data.items()]))
+
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
                 server.login("geenarfa@gmail.com", "bvws himz lgdz acit")
                 server.send_message(msg)
-            st.success("✅ ¡Solicitud enviada con éxito!")
         except Exception as e:
             st.error(f"❌ Error al enviar correo: {e}")
 
-        # Guardar archivo adjunto
+        # ✅ Guardar archivo adjunto
         if archivo:
             with open(f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}", "wb") as f:
                 f.write(archivo.read())
+
+        st.success("✅ ¡Solicitud enviada con éxito!")
+
 

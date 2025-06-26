@@ -7,7 +7,8 @@ st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="cen
 
 st.title("📋 Formulario de Solicitud de Alquiler – Habitacional / Comercial / Mixto")
 
-st.image("fachada.jpeg", caption="Frente al Palí, Higuito – Propiedad en alquiler", use_column_width=True)
+st.image("fachada.jpeg", caption="Frente al Palí, Higuito – Propiedad en alquiler", use_container_width=True)
+
 
 
 

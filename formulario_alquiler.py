@@ -3,11 +3,11 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered")
+st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered") 
 
-st.title("📋 Formulario de Solicitud de Alquiler – Habitacional / Comercial / Mixto")
+st.title("📋 Formulario de Solicitud de Alquiler:  Habitacional / Comercial / Mixto")
 
-st.image("fachada.jpeg", caption="Frente al Palí, Higuito – Se Alquila", use_container_width=True)
+st.image("fachada.jpeg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
 
 
 

@@ -82,19 +82,25 @@ if st.button("Enviar solicitud"):
         df = pd.DataFrame([form_data])
         df.to_csv("respuestas_alquiler.csv", mode='a', index=False, header=False)
 
+        # CORREO: construir y enviar
+        msg = EmailMessage()
+        msg["Subject"] = "📝 Nueva solicitud de alquiler"
         msg["From"] = "geenarfa@gmail.com"
         msg["To"] = "geenarfa@gmail.com"
+        contenido = "\\n".join([f"{clave}: {valor}" for clave, valor in form_data.items()])
+        msg.set_content(contenido)
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
-        server.starttls()
-        server.login("geenarfa@gmail.com", "bvws himz lgdz acit ")
-        server.send_message(msg)
+        try:
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login("geenarfa@gmail.com", "bvws himz lgdz acit")
+                server.send_message(msg)
+            st.success("✅ ¡Solicitud enviada con éxito!")
+        except Exception as e:
+            st.error(f"❌ Error al enviar correo: {e}")
 
-
-
-        
-        st.success("✅ ¡Solicitud enviada con éxito!")
-
+        # Guardar archivo adjunto
         if archivo:
             with open(f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}", "wb") as f:
                 f.write(archivo.read())
+

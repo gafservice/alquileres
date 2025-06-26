@@ -88,8 +88,15 @@ if st.button("Enviar solicitud"):
         msg["Subject"] = "📝 Nueva solicitud de alquiler"
         msg["From"] = "geenarfa@gmail.com"
         msg["To"] = "geenarfa@gmail.com"
-        contenido = "\\n".join([f"{clave}: {valor}" for clave, valor in form_data.items()])
-        msg.set_content(contenido)
+       
+        # Cuerpo HTML del correo
+        contenido_html = "<h3>📋 Nueva solicitud de alquiler</h3><ul>"
+        for clave, valor in form_data.items():
+            contenido_html += f"<li><strong>{clave}:</strong> {valor}</li>"
+        contenido_html += "</ul>"
+
+        msg.set_content("Este correo requiere un cliente que soporte HTML.")
+        msg.add_alternative(contenido_html, subtype="html")
 
         try:
             with smtplib.SMTP("smtp.gmail.com", 587) as server:

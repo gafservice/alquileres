@@ -7,6 +7,9 @@ from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+
+
+st.success("Gracias por su interés en alquilar una de nuestras propiedades. Este formulario le tomará menos de 5 minutos y nos permitirá conocer su perfil como inquilino.")
 # Configuración inicial
 st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered")
 st.title("📋 Formulario de Solicitud de Alquiler:  Habitacional / Comercial / Mixto")

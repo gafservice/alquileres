@@ -22,8 +22,7 @@ st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información
 st.info(
     "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
     "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-    "No será compartida sin su autorización y será almacenada de forma segura, conforme a la Ley 8968. "
-    "Si no se formaliza el contrato, los datos serán eliminados dentro de un plazo razonable.\n\n"
+    "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n"
     "Al continuar, usted acepta estos términos."
 )
 
@@ -54,6 +53,7 @@ if uso in ["Uso comercial", "Uso mixto"]:
     form_data["Empleados"] = st.number_input("¿Cuántos empleados trabajarán ahí?", min_value=0, step=1)
     form_data["Redes o web"] = st.text_input("Sitio web o redes sociales del negocio")
     form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
+    form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])
 
 # --- Sección Final Común ---
 st.header("🔒 Sección Final y Declaración")
@@ -62,7 +62,7 @@ form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
 form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
 form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
-form_data["Firma ante notario"] = st.radio("¿Acepta firmar contrato ante notario público?", ["Sí", "No"])
+form_data["Firma ante notario"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
 form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
 form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
                                        ["El inquilino", "El propietario", "A convenir entre ambas partes"])

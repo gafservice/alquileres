@@ -69,7 +69,6 @@ if uso in ["Uso comercial", "Uso mixto"]:
 
 # --- Sección Final Común ---
 st.header("🔒 Sección Final y Declaración")
-form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
 form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
 form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
@@ -78,6 +77,7 @@ form_data["Firma ante notario"] = st.radio("¿Acepta firmar contrato ante Abogad
 form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
 form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
                                        ["El inquilino", "El propietario", "A convenir entre ambas partes"])
+form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
 form_data["Observaciones"] = st.text_area("Observaciones adicionales")
 
 form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)

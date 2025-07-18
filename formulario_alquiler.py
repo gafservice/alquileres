@@ -17,7 +17,7 @@ st.success("Gracias por su interés en alquilar una de nuestras propiedades. Est
 
 
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
-
+st.video("https://youtu.be/9U7l9rvnVJc")
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
     "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "

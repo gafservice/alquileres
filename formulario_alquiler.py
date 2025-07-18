@@ -17,7 +17,7 @@ st.success("Gracias por su interés en alquilar una de nuestras propiedades. Est
 
 
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
-st.image("Carac_Servi.png", caption="Frente al Palí, Higuito Centro", use_container_width=True)
+st.image("Carac_Servi.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
 
 
 

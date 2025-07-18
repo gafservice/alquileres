@@ -16,7 +16,7 @@ st.success("Gracias por su interés en alquilar una de nuestras propiedades. Est
 # Configuración inicial
 
 
-st.image("fachada.jpeg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
+st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(

@@ -14,7 +14,7 @@ st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="cen
 st.title("📋 Formulario de Solicitud de Alquiler:  Habitacional / Comercial / Mixto")
 st.success("Gracias por su interés en alquilar una de nuestras propiedades. Este formulario le tomará menos de 5 minutos y nos permitirá conocer su perfil como inquilino.")
 # Configuración inicial
-
+st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, no dude en contactarnos a: vigias@vigias.net")
 
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
@@ -127,3 +127,4 @@ if st.button("Enviar solicitud"):
                 f.write(archivo.read())
 
         st.success("✅ ¡Solicitud enviada con éxito!")
+        st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, no dude en contactarnos a: vigias@vigias.net")

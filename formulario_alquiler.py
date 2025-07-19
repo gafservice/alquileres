@@ -127,4 +127,4 @@ if st.button("Enviar solicitud"):
                 f.write(archivo.read())
 
         st.success("✅ ¡Solicitud enviada con éxito!")
-        st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, puede contactarnos a: vigias@vigias.net")
+        st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")

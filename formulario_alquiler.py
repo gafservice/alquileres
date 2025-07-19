@@ -110,13 +110,13 @@ if st.button("Enviar solicitud"):
         try:
             msg = EmailMessage()
             msg["Subject"] = "Nueva solicitud de alquiler"
-            msg["From"] = "geenarfa@gmail.com"
-            msg["To"] = "geenarfa@gmail.com"
+            msg["From"] = "admin@vigias.net"
+            msg["To"] = "admin@vigias.net"
             msg.set_content("\n".join([f"{k}: {v}" for k, v in form_data.items()]))
 
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
-                server.login("geenarfa@gmail.com", "bvws himz lgdz acit")
+                server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")
                 server.send_message(msg)
         except Exception as e:
             st.error(f"❌ Error al enviar correo: {e}")

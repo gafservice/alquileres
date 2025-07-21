@@ -62,7 +62,6 @@ if uso in ["Uso comercial", "Uso mixto"]:
     form_data["Horario"] = st.text_input("Horario de funcionamiento")
     form_data["Clientes en el lugar"] = st.radio("¿Recibirá clientes en el lugar?", ["Sí", "No"])
     form_data["Empleados"] = st.number_input("¿Cuántos empleados trabajarán ahí?", min_value=0, step=1)
-    form_data["Correo alternativo"] = st.text_input("Correo electrónico")
     form_data["Redes o web"] = st.text_input("Sitio web o redes sociales del negocio")
     form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
     form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])

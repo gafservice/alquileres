@@ -49,7 +49,6 @@ if uso in ["Uso habitacional", "Uso mixto"]:
     form_data["Cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
     form_data["Profesión u ocupación"] = st.text_input("Profesión u ocupación")
     form_data["Teléfono"] = st.text_input("Número de teléfono")
-    form_data["Correo alternativo"] = st.text_input("Correo electrónico alternativo")
     form_data["Cantidad de personas"] = st.number_input("¿Cuántas personas vivirán en la casa?", min_value=1, step=1)
     form_data["Relación entre personas"] = st.text_area("¿Relación entre las personas que vivirán ahí?")
     form_data["Niños y edades"] = st.text_area("¿Hay niños? ¿Qué edades?")
@@ -63,6 +62,7 @@ if uso in ["Uso comercial", "Uso mixto"]:
     form_data["Horario"] = st.text_input("Horario de funcionamiento")
     form_data["Clientes en el lugar"] = st.radio("¿Recibirá clientes en el lugar?", ["Sí", "No"])
     form_data["Empleados"] = st.number_input("¿Cuántos empleados trabajarán ahí?", min_value=0, step=1)
+    form_data["Correo alternativo"] = st.text_input("Correo electrónico")
     form_data["Redes o web"] = st.text_input("Sitio web o redes sociales del negocio")
     form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
     form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])
@@ -70,6 +70,7 @@ if uso in ["Uso comercial", "Uso mixto"]:
 # --- Sección Final Común ---
 st.header("🔒 Sección Final y Declaración")
 form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
+form_data["Correo electronico"] = st.text_input("Correo electrónico alternativo")    
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
 form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
 form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
@@ -116,7 +117,7 @@ if st.button("Enviar solicitud"):
             msg.set_content(cuerpo_admin)
 
             # Validar correo del usuario
-            correo_usuario = form_data.get("Correo alternativo", "").strip()
+            correo_usuario = form_data.get("Correo electronico", "").strip()
             enviar_confirmacion = correo_usuario and "@" in correo_usuario
         
             if enviar_confirmacion:

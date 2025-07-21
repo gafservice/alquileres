@@ -115,13 +115,19 @@ try:
     msg["To"] = "admin@vigias.net"
     msg.set_content("\n".join([f"{k}: {v}" for k, v in form_data.items()]))
 
-    # --- Enviar al interesado ---
-    confirmacion = EmailMessage()
-    confirmacion["Subject"] = "Hemos recibido su solicitud de alquiler"
-    confirmacion["From"] = "admin@vigias.net"
-    confirmacion["To"] = form_data["Correo alternativo"]
+    # --- Preparar envío al interesado ---
+    correo_usuario = form_data.get("Correo alternativo", "").strip()
 
-    cuerpo = f"""
+    # Validar correo antes de enviar
+    enviar_confirmacion = correo_usuario and "@" in correo_usuario
+
+    if enviar_confirmacion:
+        confirmacion = EmailMessage()
+        confirmacion["Subject"] = "Hemos recibido su solicitud de alquiler"
+        confirmacion["From"] = "admin@vigias.net"
+        confirmacion["To"] = correo_usuario
+
+        cuerpo = f"""
 Estimado/a {form_data.get("Nombre completo", "interesado/a")},
 
 Gracias por completar el formulario de solicitud de alquiler. Hemos recibido su información correctamente.
@@ -130,7 +136,7 @@ Nuestro equipo validará la información recibida. Si desea más información o 
 
 Esta es una copia de su envío:
 ---------------------------------------
-{chr(10).join([f"{k}: {v}" for k, v in form_data.items()])}
+{chr(10).join([f"{k}: {str(v)}" for k, v in form_data.items()])}
 ---------------------------------------
 
 Gracias por su interés.
@@ -138,24 +144,18 @@ Gracias por su interés.
 Atentamente,
 Administración de Propiedades
 """
-
-    confirmacion.set_content(cuerpo)
+        confirmacion.set_content(cuerpo)
 
     # --- Enviar ambos correos ---
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
         server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")
         server.send_message(msg)
-        server.send_message(confirmacion)
+
+        if enviar_confirmacion:
+            server.send_message(confirmacion)
+        else:
+            st.warning("⚠️ El correo del interesado no es válido. No se envió confirmación.")
 
 except Exception as e:
     st.error(f"❌ Error al enviar correo: {e}")
-
-# ✅ Guardar archivo adjunto (Fuerza sangría nivel base)
-if archivo:
-    with open(f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}", "wb") as f:
-        f.write(archivo.read())
-
-st.success("✅ ¡Solicitud enviada con éxito!")
-st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
-

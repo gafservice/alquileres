@@ -126,7 +126,7 @@ df.to_csv(nombre_csv, mode='a', index=False, header=not archivo_existe)
 
 
         # ✅ Guardar en Google Sheets
-        try:
+      try:
             scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
             credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)

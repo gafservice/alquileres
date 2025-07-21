@@ -97,7 +97,7 @@ if st.button("Enviar solicitud"):
         form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
         
         # Definir el orden fijo de columnas (ajustalo si agregás o cambiás campos)
-columnas_ordenadas = [
+    columnas_ordenadas = [
     "Tipo de uso", "Nombre completo", "Cédula o pasaporte", "Profesión u ocupación", "Teléfono",
     "Cantidad de personas", "Relación entre personas", "Niños y edades", "Mascotas",
     "Nombre del negocio", "Tipo de actividad", "Horario", "Clientes en el lugar", "Empleados",

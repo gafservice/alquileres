@@ -151,4 +151,17 @@ if st.button("Enviar solicitud"):
         
         except Exception as e:
             st.error(f"❌ Error al enviar correo: {e}")
+                  # ✅ Guardar archivo adjunto
+                if archivo:
+                    try:
+                        nombre_archivo = f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}"
+                        with open(nombre_archivo, "wb") as f:
+                            f.write(archivo.read())
+                        st.success(f"📎 Archivo guardado exitosamente: {nombre_archivo}")
+                    except Exception as e:
+                        st.error(f"❌ Error al guardar archivo adjunto: {e}")
         
+                # ✅ Confirmación final
+                st.success("✅ ¡Solicitud enviada con éxito!")
+                st.info("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
+

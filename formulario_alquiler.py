@@ -124,7 +124,7 @@ if st.button("Enviar solicitud"):
         
                 Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
                 
-                Nuestro equipo revisará su información y le contactaremos a la brevedad.
+                Nuestro equipo revisará su información.
                 
                 Resumen de su envío:
                 ----------------------------------

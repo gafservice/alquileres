@@ -106,20 +106,51 @@ if st.button("Enviar solicitud"):
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
 
-        # ✅ Enviar correo
-        try:
-            msg = EmailMessage()
-            msg["Subject"] = "Nueva solicitud de alquiler"
-            msg["From"] = "admin@vigias.net"
-            msg["To"] = "admin@vigias.net"
-            msg.set_content("\n".join([f"{k}: {v}" for k, v in form_data.items()]))
+    # ✅ Enviar correo (a admin y al interesado)
+try:
+    # --- Enviar a admin ---
+    msg = EmailMessage()
+    msg["Subject"] = "Nueva solicitud de alquiler"
+    msg["From"] = "admin@vigias.net"
+    msg["To"] = "admin@vigias.net"
+    msg.set_content("\n".join([f"{k}: {v}" for k, v in form_data.items()]))
 
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")
-                server.send_message(msg)
-        except Exception as e:
-            st.error(f"❌ Error al enviar correo: {e}")
+    # --- Enviar al interesado ---
+    confirmacion = EmailMessage()
+    confirmacion["Subject"] = "Hemos recibido su solicitud de alquiler"
+    confirmacion["From"] = "admin@vigias.net"
+    confirmacion["To"] = form_data["Correo alternativo"]
+
+    cuerpo = f"""
+Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+
+Gracias por completar el formulario de solicitud de alquiler. Hemos recibido su información correctamente.
+
+Nuestro equipo validara la información recibida. Si desea más información o modificar su solicitud, puede escribirnos a info@vigias.net.
+
+Esta es una copia de su envío:
+---------------------------------------
+{chr(10).join([f"{k}: {v}" for k, v in form_data.items()])}
+---------------------------------------
+
+Gracias por su interés.
+
+Atentamente,
+Administración de Propiedades
+"""
+
+    confirmacion.set_content(cuerpo)
+
+    # --- Enviar ambos correos ---
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")  # sugerencia: usar st.secrets
+        server.send_message(msg)
+        server.send_message(confirmacion)
+
+except Exception as e:
+    st.error(f"❌ Error al enviar correo: {e}")
+
 
         # ✅ Guardar archivo adjunto
         if archivo:

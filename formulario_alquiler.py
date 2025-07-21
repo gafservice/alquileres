@@ -96,8 +96,34 @@ if st.button("Enviar solicitud"):
         hora_local = datetime.now(cr_tz)
         form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
         
-        df = pd.DataFrame([form_data])
-        df.to_csv("respuestas_alquiler.csv", mode='a', index=False, header=False)
+        # Definir el orden fijo de columnas (ajustalo si agregás o cambiás campos)
+columnas_ordenadas = [
+    "Tipo de uso", "Nombre completo", "Cédula o pasaporte", "Profesión u ocupación", "Teléfono",
+    "Cantidad de personas", "Relación entre personas", "Niños y edades", "Mascotas",
+    "Nombre del negocio", "Tipo de actividad", "Horario", "Clientes en el lugar", "Empleados",
+    "Redes o web", "Permisos municipales", "Pemisos Ministerio de Salud",
+    "Vehículos", "Correo electronico", "Historial alquiler", "Propietario anterior",
+    "Fiador", "Firma ante notario", "Depósito inicial", "Pago servicios", "Monto alquiler estimado",
+    "Observaciones", "Consentimiento", "Consentimiento datos", "Fecha de envío"
+]
+
+# Alinear los datos según ese orden
+form_data_ordenado = {col: form_data.get(col, "") for col in columnas_ordenadas}
+
+# Convertir en DataFrame
+df = pd.DataFrame([form_data_ordenado])
+
+# Guardar en CSV, asegurando encabezado solo una vez
+nombre_csv = "respuestas_alquiler.csv"
+archivo_existe = False
+try:
+    with open(nombre_csv, "r") as f:
+        archivo_existe = True
+except FileNotFoundError:
+    pass
+
+df.to_csv(nombre_csv, mode='a', index=False, header=not archivo_existe)
+
 
         # ✅ Guardar en Google Sheets
         try:

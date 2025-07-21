@@ -92,7 +92,11 @@ if st.button("Enviar solicitud"):
         st.error("Debe aceptar ambas declaraciones para continuar.")
     else:
         form_data["Tipo de uso"] = uso
-        form_data["Fecha de envío"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        from pytz import timezone
+        cr_tz = timezone("America/Costa_Rica")
+        hora_local = datetime.now(cr_tz)
+        form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
+        
         df = pd.DataFrame([form_data])
         df.to_csv("respuestas_alquiler.csv", mode='a', index=False, header=False)
 

@@ -70,7 +70,7 @@ if uso in ["Uso comercial", "Uso mixto"]:
 # --- Sección Final Común ---
 st.header("🔒 Sección Final y Declaración")
 form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
-form_data["Correo electronico"] = st.text_input("Correo electrónico alternativo")    
+form_data["Correo electronico"] = st.text_input("Correo electrónico ")    
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
 form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
 form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])

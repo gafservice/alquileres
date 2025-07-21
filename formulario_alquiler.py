@@ -106,7 +106,7 @@ if st.button("Enviar solicitud"):
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
 
-    # ✅ Enviar correo (a admin y al interesado)
+# ✅ Enviar correo (a admin y al interesado)
 try:
     # --- Enviar a admin ---
     msg = EmailMessage()
@@ -126,7 +126,7 @@ Estimado/a {form_data.get("Nombre completo", "interesado/a")},
 
 Gracias por completar el formulario de solicitud de alquiler. Hemos recibido su información correctamente.
 
-Nuestro equipo validara la información recibida. Si desea más información o modificar su solicitud, puede escribirnos a info@vigias.net.
+Nuestro equipo validará la información recibida. Si desea más información o modificar su solicitud, puede escribirnos a info@vigias.net.
 
 Esta es una copia de su envío:
 ---------------------------------------
@@ -144,18 +144,18 @@ Administración de Propiedades
     # --- Enviar ambos correos ---
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
-        server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")  # sugerencia: usar st.secrets
+        server.login("admin@vigias.net", "ymse zpxe tvlg dhvq")
         server.send_message(msg)
         server.send_message(confirmacion)
 
 except Exception as e:
     st.error(f"❌ Error al enviar correo: {e}")
 
+# ✅ Guardar archivo adjunto (Fuerza sangría nivel base)
+if archivo:
+    with open(f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}", "wb") as f:
+        f.write(archivo.read())
 
-        # ✅ Guardar archivo adjunto
-        if archivo:
-            with open(f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}", "wb") as f:
-                f.write(archivo.read())
+st.success("✅ ¡Solicitud enviada con éxito!")
+st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
 
-        st.success("✅ ¡Solicitud enviada con éxito!")
-        st.success("Si desea generar un sistemas similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")

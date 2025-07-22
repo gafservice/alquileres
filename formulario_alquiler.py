@@ -115,10 +115,7 @@ if st.button("Enviar solicitud"):
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
-            # Verifica si la hoja está vacía (sin encabezados)
-        if sheet.row_count == 0 or not sheet.row_values(1):
-            sheet.append_row(columnas_ordenadas)  # Agrega encabezados si no existen
-
+            sheet.append_row([form_data_ordenado[col] for col in columnas_ordenadas])
 
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")

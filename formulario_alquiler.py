@@ -13,26 +13,28 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
-# --- Detectar tipo de dispositivo (JavaScript) ---
-components.html(
-    """
-    <script>
-        const tipo = (window.innerWidth <= 768) ? "Móvil" : "PC";
-        window.parent.postMessage({ tipo: tipo }, "*");
-    </script>
-    """,
-    height=0
-)
+# Detectar tipo de dispositivo con JavaScript y recargar con parámetro
+if "tipo_dispositivo" not in st.session_state:
+    components.html(
+        """
+        <script>
+            const tipo = (window.innerWidth <= 768) ? "Móvil" : "PC";
+            const url = new URL(window.location);
+            url.searchParams.set("tipo", tipo);
+            window.location.replace(url);
+        </script>
+        """,
+        height=0
+    )
 
-# Crear un campo oculto que será actualizado por JavaScript
-dispositivo = st.empty()
-
-# Usar session_state para almacenar valor temporal
+# Capturar el valor del dispositivo desde el parámetro de la URL
 if "tipo_dispositivo" not in st.session_state:
     st.session_state["tipo_dispositivo"] = ""
 
-# Capturar valor del navegador (solo si fue enviado correctamente)
-msg = st.query_params.get("tipo")
+if not st.session_state["tipo_dispositivo"]:
+    msg = st.query_params.get("tipo")
+    if msg:
+        st.session_state["tipo_dispositivo"] = msg
 
 if msg:
     st.session_state["tipo_dispositivo"] = msg[0]

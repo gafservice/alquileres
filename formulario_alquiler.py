@@ -69,16 +69,6 @@ form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispues
 form_data["Observaciones"] = st.text_area("Observaciones adicionales")
 form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
 form_data["Consentimiento datos"] = st.checkbox("Autorizo su eliminación si no se formaliza un contrato.", value=False)
-st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
-st.info(
-    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
-    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-    "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n"
-    "Al continuar, usted acepta estos términos."
-)
-
-
-
 archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
 
 if st.button("Enviar solicitud"):
@@ -141,6 +131,17 @@ if st.button("Enviar solicitud"):
 
             if enviar_confirmacion:
                 cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+
+st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
+st.info(
+    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
+    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
+    "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n"
+    "Al continuar, usted acepta estos términos."
+)
+
+
+
 Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
 Resumen de su envío:
 ----------------------------------

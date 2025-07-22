@@ -38,9 +38,9 @@ form_data = {}
 if uso in ["Uso habitacional", "Uso mixto"]:
     st.header("🏠 Sección: Uso Habitacional")
     form_data["Nombre completo"] = st.text_input("Nombre completo")
-    form_data["Cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
+    form_data["Número de cédula o pasaporte""] = st.text_input("Número de cédula o pasaporte")
     form_data["Profesión u ocupación"] = st.text_input("Profesión u ocupación")
-    form_data["Teléfono"] = st.text_input("Número de teléfono")
+    form_data["Número de teléfono"] = st.text_input("Número de teléfono")
     form_data["Cantidad de personas"] = st.number_input("¿Cuántas personas vivirán en la casa?", min_value=1, step=1)
     form_data["Relación entre personas"] = st.text_area("¿Relación entre las personas que vivirán ahí?")
     form_data["Niños y edades"] = st.text_area("¿Hay niños? ¿Qué edades?")
@@ -48,8 +48,8 @@ if uso in ["Uso habitacional", "Uso mixto"]:
 
 if uso in ["Uso comercial", "Uso mixto"]:
     st.header("🏢 Sección: Uso Comercial")
-    form_data["Nombre Dueño o Administrador"] = st.text_input("Nombre Dueño o Administrador")
-    form_data["Cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
+    form_data["Nombre Administrador"] = st.text_input("Nombre Administrador")
+    form_data["Cédula Administrador"] = st.text_input("Cédula Administrador")
     form_data["Nombre del negocio"] = st.text_input("Nombre del negocio o emprendimiento")
     form_data["Tipo de actividad"] = st.text_input("Tipo de actividad comercial")
     form_data["Horario"] = st.text_input("Horario de funcionamiento")

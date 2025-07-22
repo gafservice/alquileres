@@ -7,6 +7,67 @@ from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
+import streamlit.components.v1 as components
+
+def detectar_dispositivo():
+    codigo_js = """
+    <script>
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    let tipo = "Desconocido";
+    if (/android/i.test(userAgent)) {
+        tipo = "Móvil";
+    } else if (/iPad|iPhone|iPod/.test(userAgent)) {
+        tipo = "Móvil";
+    } else if (/tablet/i.test(userAgent)) {
+        tipo = "Tableta";
+    } else if (/Mobile|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+        tipo = "Móvil";
+    } else {
+        tipo = "PC";
+    }
+    window.parent.postMessage(tipo, "*");
+    </script>
+    """
+    componente = components.html(f"""
+        <div id="dispositivo"></div>
+        {codigo_js}
+        <script>
+        window.addEventListener("message", (event) => {{
+            const tipo = event.data;
+            const div = document.getElementById("dispositivo");
+            div.innerText = tipo;
+        }});
+        </script>
+    """, height=0)
+
+def registrar_visita(uso, tipo_dispositivo):
+    from pytz import timezone
+    from datetime import datetime
+    cr_tz = timezone("America/Costa_Rica")
+    hora_local = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+    df_visita = pd.DataFrame([{
+        "Fecha y hora": hora_local,
+        "Tipo de uso": uso,
+        "Dispositivo": tipo_dispositivo
+    }])
+    nombre_archivo = "accesos_formulario.csv"
+    archivo_existe = False
+    try:
+        with open(nombre_archivo, "r") as f:
+            archivo_existe = True
+    except FileNotFoundError:
+        pass
+    df_visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
+
+
+
+
+
+
+
+
+
+
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 st.title("📋 INFORMACIÓN GENERAL")
@@ -32,6 +93,22 @@ st.info("La información que usted proporcione será tratada con estricta confid
          "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n")
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
+st.markdown("### 📱 Detectando tipo de dispositivo...")
+detectar_dispositivo()
+tipo_dispositivo = st.empty()
+import time
+
+# Esperar hasta detectar tipo de dispositivo (máximo 3 segundos)
+for _ in range(30):
+    tipo = tipo_dispositivo.text
+    if tipo and tipo not in ["", "None"]:
+        break
+    time.sleep(0.1)
+
+tipo_detectado = tipo_dispositivo.text or "Desconocido"
+registrar_visita(uso, tipo_detectado)
+
+
 form_data = {}
 
 

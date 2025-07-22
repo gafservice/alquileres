@@ -8,9 +8,21 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
+import requests
+
 
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+
+def obtener_user_agent():
+    try:
+        res = requests.get("https://httpbin.org/user-agent")
+        if res.ok:
+            return res.json()["user-agent"]
+        else:
+            return "Desconocido"
+    except:
+        return "Desconocido"
 
 
 # Detectar tipo de dispositivo con JavaScript y recargar con parámetro
@@ -32,8 +44,10 @@ if "tipo_dispositivo" not in st.session_state:
 
     import re
     import streamlit as st
+    
+    user_agent = obtener_user_agent()
 
-    user_agent = st.request.headers.get("User-Agent", "")
+    #user_agent = st.request.headers.get("User-Agent", "")
 
 if "tipo_dispositivo" not in st.session_state:
     if re.search("Mobile|Android|iPhone|iPad", user_agent, re.IGNORECASE):
@@ -139,6 +153,8 @@ if "registrado" not in st.session_state and st.session_state.get("tipo_dispositi
             datos_visita["Fecha"],
             datos_visita["IP o Navegador"],
             datos_visita["Origen"]
+            datos_visita["IP o Navegador"] = user_agent
+
         ])
     except Exception as e:
         st.warning(f"No se pudo registrar en Google Sheets: {e}")

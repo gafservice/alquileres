@@ -11,11 +11,9 @@ from pytz import timezone
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 st.title("📋 INFORMACIÓN GENERAL")
 st.title("Para uso: Habitacional / Comercial / Mixto")
-st.success("Gracias por su interés en alquilar una de nuestras propiedades. Este formulario le tomará menos de 5 minutos y nos permitirá conocer su perfil como inquilino.")
-st.success("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
 
-st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
-st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
+st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios", use_container_width=True)
+st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
 
 st.markdown("### 📍 Ubicación del inmueble")
 st.components.v1.iframe(
@@ -25,6 +23,8 @@ st.components.v1.iframe(
 )
 
 st.video("https://youtu.be/9U7l9rvnVJc")
+
+st.success("Gracias por su interés en alquilar una de nuestras propiedades. Nos gustaria saber mas de usted y sus necesidade como inquilino.")
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
     "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "

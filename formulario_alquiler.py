@@ -19,7 +19,64 @@ import streamlit.components.v1 as components
 
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+
+
+# Detectar tipo de dispositivo (móvil o PC)
+components.html("""
+<script>
+    const width = window.innerWidth;
+    const tipo = (width <= 768) ? "Móvil" : "PC";
+    const input = window.parent.document.querySelector("input[name='dispositivo']");
+    if (input) {
+        input.value = tipo;
+    }
+</script>
+""", height=0)
+
+# Campo oculto para que JavaScript escriba el tipo de dispositivo
+dispositivo = st.text_input("dispositivo", value="", key="dispositivo", label_visibility="collapsed")
+
+
+
+
+
+
+
+
+
+
 st.title("📋 INFORMACIÓN GENERAL")
+
+
+from pytz import timezone
+import pandas as pd
+from datetime import datetime
+
+# Registrar visita al formulario aunque no lo llene
+if "registrado" not in st.session_state and dispositivo:
+    cr_tz = timezone("America/Costa_Rica")
+    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+    # Determinar uso inicial por defecto
+    uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
+
+    # Guardar en archivo CSV
+    visita = pd.DataFrame([{
+        "Fecha": hora_visita,
+        "Dispositivo": dispositivo,
+        "Uso_interesado": uso_detectado
+    }])
+    visita.to_csv("visitas_formulario.csv", mode='a', index=False, header=not pd.io.common.file_exists("visitas_formulario.csv"))
+    
+    # Marcar sesión como registrada
+    st.session_state["registrado"] = True
+
+
+
+
+
+
+
 st.title("Para uso: Habitacional / Comercial / Mixto")
 
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)

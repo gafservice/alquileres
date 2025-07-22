@@ -38,7 +38,7 @@ form_data = {}
 if uso in ["Uso habitacional", "Uso mixto"]:
     st.header("🏠 Sección: Uso Habitacional")
     form_data["Nombre completo"] = st.text_input("Nombre completo")
-    form_data["Número de cédula o pasaporte""] = st.text_input("Número de cédula o pasaporte")
+    form_data["Número de cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
     form_data["Profesión u ocupación"] = st.text_input("Profesión u ocupación")
     form_data["Número de teléfono"] = st.text_input("Número de teléfono")
     form_data["Cantidad de personas"] = st.number_input("¿Cuántas personas vivirán en la casa?", min_value=1, step=1)

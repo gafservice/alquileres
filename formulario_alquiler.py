@@ -48,6 +48,8 @@ if uso in ["Uso habitacional", "Uso mixto"]:
 
 if uso in ["Uso comercial", "Uso mixto"]:
     st.header("🏢 Sección: Uso Comercial")
+    form_data["Nombre Dueño o Administrador"] = st.text_input("Nombre Dueño o Administrador")
+    form_data["Cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
     form_data["Nombre del negocio"] = st.text_input("Nombre del negocio o emprendimiento")
     form_data["Tipo de actividad"] = st.text_input("Tipo de actividad comercial")
     form_data["Horario"] = st.text_input("Horario de funcionamiento")
@@ -63,7 +65,7 @@ form_data["Correo electronico"] = st.text_input("Correo electrónico ")
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
 form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
 form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
-form_data["Firma ante notario"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
+form_data["Firma ante Abogado"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
 form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
 form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
                                        ["El inquilino", "El propietario", "A convenir entre ambas partes"])

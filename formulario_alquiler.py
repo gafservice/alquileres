@@ -86,14 +86,15 @@ if st.button("Enviar solicitud"):
         form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
 
         columnas_ordenadas = [
-            "Tipo de uso", "Nombre completo", "Cédula o pasaporte", "Profesión u ocupación", "Teléfono",
-            "Cantidad de personas", "Relación entre personas", "Niños y edades", "Mascotas",
-            "Nombre del negocio", "Tipo de actividad", "Horario", "Clientes en el lugar", "Empleados",
-            "Redes o web", "Permisos municipales", "Pemisos Ministerio de Salud", "Vehículos",
-            "Correo electronico", "Historial alquiler", "Propietario anterior", "Fiador", "Firma ante notario",
-            "Depósito inicial", "Pago servicios", "Monto alquiler estimado", "Observaciones", "Consentimiento",
-            "Consentimiento datos", "Fecha de envío"
-        ]
+    "Tipo de uso", "Nombre completo", "Número de cédula o pasaporte", "Profesión u ocupación", "Número de teléfono",
+    "Cantidad de personas", "Relación entre personas", "Niños y edades", "Mascotas",
+    "Nombre Administrador", "Cédula Administrador", "Nombre del negocio", "Tipo de actividad", "Horario",
+    "Clientes en el lugar", "Empleados", "Redes o web", "Permisos municipales", "Pemisos Ministerio de Salud",
+    "Vehículos", "Correo electronico", "Historial alquiler", "Propietario anterior",
+    "Fiador", "Firma ante Abogado", "Depósito inicial", "Pago servicios", "Monto alquiler estimado",
+    "Observaciones", "Consentimiento", "Consentimiento datos", "Fecha de envío"
+]
+
 
         form_data_ordenado = {col: form_data.get(col, "") for col in columnas_ordenadas}
         df = pd.DataFrame([form_data_ordenado])

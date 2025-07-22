@@ -42,6 +42,19 @@ if msg:
 
 st.title("📋 INFORMACIÓN GENERAL")
 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
+
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+client = gspread.authorize(creds)
+
+sheet = client.open("registro_visitas").sheet1  # El nombre debe coincidir
+
+# Agrega la fila con los datos de la visita
+sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
 
 from pytz import timezone
 import pandas as pd

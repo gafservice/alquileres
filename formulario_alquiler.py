@@ -31,9 +31,9 @@ if "tipo_dispositivo" not in st.session_state:
 if "tipo_dispositivo" not in st.session_state:
 
     import re
-import streamlit as st
+    import streamlit as st
 
-user_agent = st.request.headers.get("User-Agent", "")
+    user_agent = st.request.headers.get("User-Agent", "")
 
 if "tipo_dispositivo" not in st.session_state:
     if re.search("Mobile|Android|iPhone|iPad", user_agent, re.IGNORECASE):

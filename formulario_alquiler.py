@@ -100,19 +100,33 @@ from pytz import timezone
 import pandas as pd
 from datetime import datetime
 
-if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
+if "registrado" not in st.session_state and "tipo" in st.query_params:
+    st.session_state["registrado"] = True  # ✅ Evita doble registro aunque recargue
+
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
     uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
-    tipo_dispositivo = st.session_state["tipo_dispositivo"]
+    tipo_dispositivo = st.session_state.get("tipo_dispositivo", "No detectado")
 
-    visita = pd.DataFrame([{
+    datos_visita = {
         "Fecha": hora_visita,
-        "Dispositivo": tipo_dispositivo,
-        "Uso_interesado": uso_detectado
-    }])
+        "IP o Navegador": tipo_dispositivo,
+        "Origen": uso_detectado
+    }
 
+    # Guardar en Google Sheets
+    try:
+        sheet.append_row([
+            datos_visita["Fecha"],
+            datos_visita["IP o Navegador"],
+            datos_visita["Origen"]
+        ])
+    except Exception as e:
+        st.warning(f"No se pudo registrar en Google Sheets: {e}")
+
+    # Guardar en archivo local CSV (opcional si estás en GitHub)
+    visita = pd.DataFrame([datos_visita])
     nombre_archivo = "registro_visitas.csv"
     archivo_existe = False
     try:
@@ -122,9 +136,6 @@ if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]
         pass
 
     visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
-    st.session_state["registrado"] = True
-
-
 
 
 

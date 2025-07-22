@@ -55,7 +55,7 @@ if uso in ["Uso comercial", "Uso mixto"]:
     form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
     form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])
 
-st.header("🔒 Sección Final y Declaración")
+st.header("🔒 Sección Final")
 form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
 form_data["Correo electronico"] = st.text_input("Correo electrónico ")
 form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")

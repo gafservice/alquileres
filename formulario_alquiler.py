@@ -33,8 +33,9 @@ if "tipo_dispositivo" not in st.session_state:
 
 if not st.session_state["tipo_dispositivo"]:
       
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
     msg = query_params.get("tipo", [""])[0]
+
 
     
     if msg:

@@ -30,7 +30,7 @@ st.components.v1.iframe(
 
 st.video("https://youtu.be/9U7l9rvnVJc")
 
-st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles")
+st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidades como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles.")
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")

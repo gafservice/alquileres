@@ -56,7 +56,7 @@ def registrar_visita(uso, tipo_dispositivo):
         with open(nombre_archivo, "r") as f:
             archivo_existe = True
     except FileNotFoundError:
-        pass
+        passLa información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.
     df_visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
 
 
@@ -88,9 +88,7 @@ st.video("https://youtu.be/9U7l9rvnVJc")
 st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles")
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
-st.info("La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
-         "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-         "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n")
+st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
 st.markdown("### 📱 Detectando tipo de dispositivo...")

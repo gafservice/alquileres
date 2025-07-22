@@ -96,7 +96,7 @@ if st.button("Enviar solicitud"):
 
         form_data_ordenado = {col: form_data.get(col, "") for col in columnas_ordenadas}
         df = pd.DataFrame([form_data_ordenado])
-        nombre_csv = "respuestas_alquiler.csv"
+        nombre_csv = "Respuestas_Alquiler.csv"
         archivo_existe = False
         try:
             with open(nombre_csv, "r") as f:

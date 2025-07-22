@@ -1,80 +1,30 @@
 import streamlit as st
 import pandas as pd
+import smtplib
+import json
+from email.message import EmailMessage
 from datetime import datetime
-import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from pytz import timezone
 
-st.set_page_config(page_title="Consulta de Alquiler", layout="centered")
+st.set_page_config(page_title="Formulario de Solicitud de Alquiler", layout="centered")
+st.title("📋 Formulario de Solicitud de Alquiler: Habitacional / Comercial / Mixto")
+st.success("Gracias por su interés en alquilar una de nuestras propiedades. Este formulario le tomará menos de 5 minutos y nos permitirá conocer su perfil como inquilino.")
+st.success("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
 
-# --- Encabezado general ---
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
-st.title("🏠 Consulta rápida de alquiler")
-st.markdown("¿Desea más información sobre esta propiedad o llenar un formulario express? Elija una opción a continuación:")
+st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro", use_container_width=True)
 
-# --- Menú inicial ---
-opcion = st.radio("Seleccione una opción", ["", "🔍 Ver más información", "📝 Llenar formulario express", "📄 Llenar formulario completo"])
+st.markdown("### 📍 Ubicación del inmueble")
+st.components.v1.iframe(
+    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d245.67975692153937!2d-84.05487347043625!3d9.86076000110528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scr!4v1752880163707!5m2!1ses-419!2scr",
+    height=450,
+    width=600
+)
 
-# --- Bloque: Información multimedia ---
-if opcion == "🔍 Ver más información":
-    st.markdown("### 🎥 Video de la propiedad")
-    st.video("https://youtu.be/9U7l9rvnVJc")
-
-    st.markdown("### 📍 Ubicación")
-    st.components.v1.iframe(
-        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d245.67975692153937!2d-84.05487347043625!3d9.86076000110528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scr!4v1752880163707!5m2!1ses-419!2scr",
-        height=450,
-        width=600
-    )
-
-    st.markdown("¿Desea avanzar a uno de los formularios?")
-    avanzar = st.radio("Seleccione una acción", ["", "➡️ Ir al formulario express", "📝 Ir al formulario completo"])
-
-    if avanzar == "➡️ Ir al formulario express":
-        opcion = "📝 Llenar formulario express"
-    elif avanzar == "📝 Ir al formulario completo":
-        opcion = "📄 Llenar formulario completo"
-
-# --- Bloque: Formulario Express ---
-if opcion == "📝 Llenar formulario express":
-    st.markdown("### ✏️ Formulario Express")
-    st.info("Este formulario rápido le permite dejarnos sus datos de contacto básicos.")
-
-    with st.form(key="form_express"):
-        nombre = st.text_input("Nombre completo")
-        telefono = st.text_input("Número de teléfono")
-        correo = st.text_input("Correo electrónico")
-        mensaje = st.text_area("Mensaje o consulta rápida")
-        aceptar = st.checkbox("Autorizo el contacto por medios digitales", value=False)
-
-        enviado = st.form_submit_button("Enviar")
-
-        if enviado:
-            if not (nombre and telefono and correo and aceptar):
-                st.error("Debe completar todos los campos obligatorios y aceptar el consentimiento.")
-            else:
-                # Guardar datos en archivo CSV
-                datos = {
-                    "Nombre": nombre,
-                    "Teléfono": telefono,
-                    "Correo": correo,
-                    "Mensaje": mensaje,
-                    "Consentimiento": "Sí",
-                    "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                }
-                df = pd.DataFrame([datos])
-
-                archivo = "contacto_express.csv"
-                existe = os.path.exists(archivo)
-                df.to_csv(archivo, mode="a", index=False, header=not existe)
-
-                st.success("✅ Su consulta fue enviada exitosamente. Le contactaremos pronto.")
-
-# --- Bloque: Formulario completo (embebido o incluido) ---
-if opcion == "📄 Llenar formulario completo":
-    st.markdown("---")
-    st.markdown("## 📋 Formulario de Solicitud de Alquiler Completo")
-    st.info("Formulario detallado para evaluar su perfil como inquilino. Tarda aprox. 5 minutos.")
-
-   st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
+st.video("https://youtu.be/9U7l9rvnVJc")
+st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
     "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
     "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
@@ -157,6 +107,7 @@ if st.button("Enviar solicitud"):
             pass
 
         df.to_csv(nombre_csv, mode='a', index=False, header=not archivo_existe)
+
         # ✅ Guardar en Google Sheets
         try:
             scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -164,19 +115,13 @@ if st.button("Enviar solicitud"):
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
-        
-            # Verifica si la hoja está vacía y agrega encabezados si es necesario
-            existing_headers = sheet.row_values(1)
-            if not existing_headers:
-                sheet.insert_row(columnas_ordenadas, 1)
-        
-            # Agrega nueva fila de datos en la segunda fila
-            nueva_fila = [form_data_ordenado.get(col, "") for col in columnas_ordenadas]
-            sheet.insert_row(nueva_fila, 2)
-        
+            # Verifica si la hoja está vacía (sin encabezados)
+        if sheet.row_count == 0 or not sheet.row_values(1):
+            sheet.append_row(columnas_ordenadas)  # Agrega encabezados si no existen
+
+
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
-
 
         # ✅ Enviar correo
         try:
@@ -229,12 +174,4 @@ Administración de Propiedades
 
         # ✅ Confirmación final
         st.success("✅ ¡Solicitud enviada con éxito!")
-        st.info("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
-
-    # O bien, incluir aquí el formulario directamente (usa tu formulario original aquí ↓↓↓)
-    st.warning("⚠️ Aquí debes insertar el contenido de tu formulario completo.")
-    st.markdown("Por ejemplo, puedes copiar el bloque de tu script original de alquiler aquí.")
-
-# --- Pie de página ---
-st.markdown("---")
-st.markdown("📧 Contacto: info@vigias.net")
+        st.info("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net") 

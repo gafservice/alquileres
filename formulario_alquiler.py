@@ -9,57 +9,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 
-def detectar_dispositivo():
-    codigo_js = """
-    <script>
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    let tipo = "Desconocido";
-    if (/android/i.test(userAgent)) {
-        tipo = "Móvil";
-    } else if (/iPad|iPhone|iPod/.test(userAgent)) {
-        tipo = "Móvil";
-    } else if (/tablet/i.test(userAgent)) {
-        tipo = "Tableta";
-    } else if (/Mobile|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
-        tipo = "Móvil";
-    } else {
-        tipo = "PC";
-    }
-    window.parent.postMessage(tipo, "*");
-    </script>
-    """
-    componente = components.html(f"""
-        <div id="dispositivo"></div>
-        {codigo_js}
-        <script>
-        window.addEventListener("message", (event) => {{
-            const tipo = event.data;
-            const div = document.getElementById("dispositivo");
-            div.innerText = tipo;
-        }});
-        </script>
-    """, height=0)
-
-def registrar_visita(uso, tipo_dispositivo):
-    from pytz import timezone
-    from datetime import datetime
-    cr_tz = timezone("America/Costa_Rica")
-    hora_local = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-    df_visita = pd.DataFrame([{
-        "Fecha y hora": hora_local,
-        "Tipo de uso": uso,
-        "Dispositivo": tipo_dispositivo
-    }])
-    nombre_archivo = "accesos_formulario.csv"
-    archivo_existe = False
-    try:
-        with open(nombre_archivo, "r") as f:
-            archivo_existe = True
-    except FileNotFoundError:
-        passLa información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.
-    df_visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
-
-
 
 
 
@@ -89,6 +38,13 @@ st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")
+
+st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
+st.info("La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
+         "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
+         "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n")
+
+
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
 st.markdown("### 📱 Detectando tipo de dispositivo...")

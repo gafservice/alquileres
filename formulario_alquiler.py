@@ -156,7 +156,7 @@ Administración de Propiedades
 
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
-                server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                server.login("geenarfa@gmail.com", "ymsezpxetvlgdhvq")
                 server.send_message(msg)
                 if enviar_confirmacion:
                     server.send_message(confirmacion)

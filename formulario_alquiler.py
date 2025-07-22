@@ -66,10 +66,8 @@ form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los s
                                        ["El inquilino", "El propietario", "A convenir entre ambas partes"])
 form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
 form_data["Observaciones"] = st.text_area("Observaciones adicionales")
-form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
 archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
-form_data["Consentimiento datos"] = st.checkbox("Autorizo su eliminación si no se formaliza un contrato.", value=False)
-
+form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
 
 if st.button("Enviar solicitud"):
     if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:

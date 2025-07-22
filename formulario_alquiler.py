@@ -107,7 +107,6 @@ if st.button("Enviar solicitud"):
             pass
 
         df.to_csv(nombre_csv, mode='a', index=False, header=not archivo_existe)
-
         # ✅ Guardar en Google Sheets
         try:
             scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -115,10 +114,19 @@ if st.button("Enviar solicitud"):
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
-            sheet.append_row([form_data_ordenado[col] for col in columnas_ordenadas])
-
+        
+            # Verifica si la hoja está vacía y agrega encabezados si es necesario
+            existing_headers = sheet.row_values(1)
+            if not existing_headers:
+                sheet.insert_row(columnas_ordenadas, 1)
+        
+            # Agrega nueva fila de datos en la segunda fila
+            nueva_fila = [form_data_ordenado.get(col, "") for col in columnas_ordenadas]
+            sheet.insert_row(nueva_fila, 2)
+        
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
 
         # ✅ Enviar correo
         try:

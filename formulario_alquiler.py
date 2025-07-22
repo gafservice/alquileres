@@ -9,7 +9,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
-st.title("📋 Formulario de Solicitud de Alquiler: Habitacional / Comercial / Mixto")
+st.title("📋 INFORMACIÓN GENERAL")
+st.title("Para uso: Habitacional / Comercial / Mixto")
 st.success("Gracias por su interés en alquilar una de nuestras propiedades. Este formulario le tomará menos de 5 minutos y nos permitirá conocer su perfil como inquilino.")
 st.success("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net")
 

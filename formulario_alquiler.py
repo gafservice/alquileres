@@ -109,22 +109,22 @@ if uso in ["Uso comercial", "Uso mixto"]:
     form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
     form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])
 
-st.header("🔒 Sección Final y Declaración")
-form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
-form_data["Correo electronico"] = st.text_input("Correo electrónico ")
-form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
-form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
-form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
-form_data["Firma ante Abogado"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
-form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
-form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
-                                       ["El inquilino", "El propietario", "A convenir entre ambas partes"])
-form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
-form_data["Observaciones"] = st.text_area("Observaciones adicionales")
-form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
-form_data["Consentimiento datos"] = st.checkbox("Autorizo el uso y eventual verificación de mis datos personales, y acepto su eliminación si no se formaliza un contrato.", value=False)
-
-archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
+    st.header("🔒 Sección Final y Declaración")
+    form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
+    form_data["Correo electronico"] = st.text_input("Correo electrónico ")
+    form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
+    form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
+    form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
+    form_data["Firma ante Abogado"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
+    form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
+    form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
+                                           ["El inquilino", "El propietario", "A convenir entre ambas partes"])
+    form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
+    form_data["Observaciones"] = st.text_area("Observaciones adicionales")
+    form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera y autorizo su verificación.", value=False)
+    form_data["Consentimiento datos"] = st.checkbox("Autorizo el uso y eventual verificación de mis datos personales, y acepto su eliminación si no se formaliza un contrato.", value=False)
+    
+    archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
 
 if st.button("Enviar solicitud"):
     if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:

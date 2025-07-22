@@ -37,22 +37,6 @@ msg = st.query_params.get("tipo")
 if msg:
     st.session_state["tipo_dispositivo"] = msg[0]
 
-# Mostrar o registrar
-if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
-    tipo = st.session_state["tipo_dispositivo"]
-    cr_tz = timezone("America/Costa_Rica")
-    hora = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-    visita = pd.DataFrame([{
-        "Fecha": hora,
-        "Dispositivo": tipo,
-        "Origen": "Inicio"
-    }])
-    archivo = "registro_visitas.csv"
-    existe = os.path.exists(archivo)
-    visita.to_csv(archivo, mode='a', index=False, header=not existe)
-    st.session_state["registrado"] = True
-
 
 st.title("📋 INFORMACIÓN GENERAL")
 
@@ -61,15 +45,16 @@ from pytz import timezone
 import pandas as pd
 from datetime import datetime
 
-if "registrado" not in st.session_state:
+if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
     uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
+    tipo_dispositivo = st.session_state["tipo_dispositivo"]
 
     visita = pd.DataFrame([{
         "Fecha": hora_visita,
-        "Dispositivo": dispositivo,
+        "Dispositivo": tipo_dispositivo,
         "Uso_interesado": uso_detectado
     }])
 
@@ -83,6 +68,7 @@ if "registrado" not in st.session_state:
 
     visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
     st.session_state["registrado"] = True
+
 
 
 

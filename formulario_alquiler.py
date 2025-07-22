@@ -116,8 +116,8 @@ if st.button("Enviar solicitud"):
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
             # Verifica si la hoja está vacía (sin encabezados)
-if sheet.row_count == 0 or not sheet.row_values(1):
-    sheet.append_row(columnas_ordenadas)  # Agrega encabezados si no existen
+            if sheet.row_count == 0 or not sheet.row_values(1):
+            sheet.append_row(columnas_ordenadas)  # Agrega encabezados si no existen
 
 
         except Exception as e:

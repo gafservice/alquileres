@@ -13,12 +13,44 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
-# Detectar tipo de dispositivo usando User-Agent
-user_agent = st.request_headers.get("user-agent", "").lower()
-if "mobile" in user_agent:
-    dispositivo = "Móvil"
-else:
-    dispositivo = "PC"
+# --- Detectar tipo de dispositivo (JavaScript) ---
+components.html(
+    """
+    <script>
+        const tipo = (window.innerWidth <= 768) ? "Móvil" : "PC";
+        window.parent.postMessage({ tipo: tipo }, "*");
+    </script>
+    """,
+    height=0
+)
+
+# Crear un campo oculto que será actualizado por JavaScript
+dispositivo = st.empty()
+
+# Usar session_state para almacenar valor temporal
+if "tipo_dispositivo" not in st.session_state:
+    st.session_state["tipo_dispositivo"] = ""
+
+# Capturar valor del navegador (solo si fue enviado correctamente)
+msg = st.experimental_get_query_params().get("tipo")
+if msg:
+    st.session_state["tipo_dispositivo"] = msg[0]
+
+# Mostrar o registrar
+if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
+    tipo = st.session_state["tipo_dispositivo"]
+    cr_tz = timezone("America/Costa_Rica")
+    hora = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+    visita = pd.DataFrame([{
+        "Fecha": hora,
+        "Dispositivo": tipo,
+        "Origen": "Inicio"
+    }])
+    archivo = "registro_visitas.csv"
+    existe = os.path.exists(archivo)
+    visita.to_csv(archivo, mode='a', index=False, header=not existe)
+    st.session_state["registrado"] = True
 
 
 st.title("📋 INFORMACIÓN GENERAL")

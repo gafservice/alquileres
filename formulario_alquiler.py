@@ -74,12 +74,12 @@ if opcion == "📄 Llenar formulario completo":
     st.markdown("## 📋 Formulario de Solicitud de Alquiler Completo")
     st.info("Formulario detallado para evaluar su perfil como inquilino. Tarda aprox. 5 minutos.")
 
-   st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
-   st.info(
-    "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
-    "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-    "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n"
-    "Al continuar, usted acepta estos términos."
+    st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
+    st.info(
+        "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
+        "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
+        "Ningún dato será compartido ni almacenado sin su autorización explícita. Si no se formaliza el contrato, los datos serán eliminados en su totalidad.\n\n"
+        "Al continuar, usted acepta estos términos."
     )
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])

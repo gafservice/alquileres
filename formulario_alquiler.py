@@ -38,27 +38,8 @@ st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")
-
-
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
-st.markdown("### 📱 Detectando tipo de dispositivo...")
-detectar_dispositivo()
-tipo_dispositivo = st.empty()
-import time
-
-# Esperar hasta detectar tipo de dispositivo (máximo 3 segundos)
-for _ in range(30):
-    tipo = tipo_dispositivo.text
-    if tipo and tipo not in ["", "None"]:
-        break
-    time.sleep(0.1)
-
-tipo_detectado = tipo_dispositivo.text or "Desconocido"
-registrar_visita(uso, tipo_detectado)
-
-
 form_data = {}
-
 
 if uso in ["Uso habitacional", "Uso mixto"]:
     st.header("🏠 Sección: Uso Habitacional")

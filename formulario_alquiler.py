@@ -21,28 +21,12 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
-# Detectar tipo de dispositivo (móvil o PC)
-components.html("""
-<script>
-    const width = window.innerWidth;
-    const tipo = (width <= 768) ? "Móvil" : "PC";
-    const input = window.parent.document.querySelector("input[name='dispositivo']");
-    if (input) {
-        input.value = tipo;
-    }
-</script>
-""", height=0)
-
-# Campo oculto para que JavaScript escriba el tipo de dispositivo
-dispositivo = st.text_input("dispositivo", value="", key="dispositivo", label_visibility="collapsed")
-
-
-
-
-
-
-
-
+# Detectar tipo de dispositivo usando User-Agent
+user_agent = st.request_headers.get("user-agent", "").lower()
+if "mobile" in user_agent:
+    dispositivo = "Móvil"
+else:
+    dispositivo = "PC"
 
 
 st.title("📋 INFORMACIÓN GENERAL")
@@ -52,24 +36,29 @@ from pytz import timezone
 import pandas as pd
 from datetime import datetime
 
-# Registrar visita al formulario aunque no lo llene
-if "registrado" not in st.session_state and dispositivo:
+if "registrado" not in st.session_state:
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
-    # Determinar uso inicial por defecto
     uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
 
-    # Guardar en archivo CSV
     visita = pd.DataFrame([{
         "Fecha": hora_visita,
         "Dispositivo": dispositivo,
         "Uso_interesado": uso_detectado
     }])
-    visita.to_csv("registro_visitas.csv", mode='a', index=False, header=not pd.io.common.file_exists("registro_visitas.csv"))
-    
-    # Marcar sesión como registrada
+
+    nombre_archivo = "registro_visitas.csv"
+    archivo_existe = False
+    try:
+        with open(nombre_archivo, "r") as f:
+            archivo_existe = True
+    except FileNotFoundError:
+        pass
+
+    visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
     st.session_state["registrado"] = True
+
 
 
 

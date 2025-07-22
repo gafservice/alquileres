@@ -22,7 +22,7 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 st.title("📋 INFORMACIÓN GENERAL")
 st.title("Para uso: Habitacional / Comercial / Mixto")
 
-st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios", use_container_width=True)
+st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
 
 st.markdown("### 📍 Ubicación del inmueble")
@@ -38,12 +38,6 @@ st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")
-
-st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
-st.info("La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
-         "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-         "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n")
-
 
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])

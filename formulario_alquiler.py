@@ -66,7 +66,7 @@ if "registrado" not in st.session_state and dispositivo:
         "Dispositivo": dispositivo,
         "Uso_interesado": uso_detectado
     }])
-    visita.to_csv("visitas_formulario.csv", mode='a', index=False, header=not pd.io.common.file_exists("visitas_formulario.csv"))
+    visita.to_csv("registro_visitas.csv", mode='a', index=False, header=not pd.io.common.file_exists("registro_visitas.csv"))
     
     # Marcar sesión como registrada
     st.session_state["registrado"] = True

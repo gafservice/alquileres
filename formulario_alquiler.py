@@ -53,6 +53,46 @@ client = gspread.authorize(creds)
 
 sheet = client.open("registro_visitas").sheet1  # El nombre debe coincidir
 
+
+if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
+    cr_tz = timezone("America/Costa_Rica")
+    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+    uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
+    tipo_dispositivo = st.session_state["tipo_dispositivo"]
+
+    datos_visita = {
+        "Fecha": hora_visita,
+        "IP o Navegador": tipo_dispositivo,
+        "Origen": uso_detectado
+    }
+
+    # Guardar en Google Sheets
+    try:
+        sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
+    except Exception as e:
+        st.warning(f"No se pudo registrar en Google Sheets: {e}")
+
+    # Guardar en archivo local
+    visita = pd.DataFrame([datos_visita])
+    nombre_archivo = "registro_visitas.csv"
+    archivo_existe = False
+    try:
+        with open(nombre_archivo, "r") as f:
+            archivo_existe = True
+    except FileNotFoundError:
+        pass
+
+    visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
+    st.session_state["registrado"] = True
+
+
+
+
+
+
+
+
 # Agrega la fila con los datos de la visita
 sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
 

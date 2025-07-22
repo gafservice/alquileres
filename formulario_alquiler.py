@@ -24,8 +24,7 @@ st.components.v1.iframe(
 
 st.video("https://youtu.be/9U7l9rvnVJc")
 
-st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino.")
-st.success("Para lo cual hemos preparado este pequeño formulario.")
+st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino. Para lo cual hemos preparado este pequeño formulario.")
 
 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])

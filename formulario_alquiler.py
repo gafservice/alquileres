@@ -32,17 +32,13 @@ if "tipo_dispositivo" not in st.session_state:
     st.session_state["tipo_dispositivo"] = ""
 
 if not st.session_state["tipo_dispositivo"]:
-    
+      
     query_params = st.experimental_get_query_params()
-    msg = query_params.get("tipo")
+    msg = query_params.get("tipo", [""])[0]
 
     
     if msg:
         st.session_state["tipo_dispositivo"] = msg
-
-if msg:
-    st.session_state["tipo_dispositivo"] = msg[0]
-
 
 st.title("📋 INFORMACIÓN GENERAL")
 
@@ -95,15 +91,6 @@ if "registrado" not in st.session_state and st.session_state.get("tipo_dispositi
 
     visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
     st.session_state["registrado"] = True
-
-
-
-
-
-
-
-
-
 
 # Agrega la fila con los datos de la visita
 sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])

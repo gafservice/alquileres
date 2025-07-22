@@ -29,7 +29,27 @@ if "tipo_dispositivo" not in st.session_state:
 
 # Capturar el valor del dispositivo desde el parámetro de la URL
 if "tipo_dispositivo" not in st.session_state:
+
+    import re
+import streamlit as st
+
+user_agent = st.request.headers.get("User-Agent", "")
+
+if "tipo_dispositivo" not in st.session_state:
+    if re.search("Mobile|Android|iPhone|iPad", user_agent, re.IGNORECASE):
+        st.session_state["tipo_dispositivo"] = "Móvil"
+    else:
+        st.session_state["tipo_dispositivo"] = "PC"
+
+
+
+
+
+    
     st.session_state["tipo_dispositivo"] = ""
+
+
+
 
 if not st.session_state["tipo_dispositivo"]:
       

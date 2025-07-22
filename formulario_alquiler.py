@@ -24,7 +24,7 @@ st.components.v1.iframe(
 
 st.video("https://youtu.be/9U7l9rvnVJc")
 
-st.success("Gracias por su interés en alquilar una de nuestras propiedades. Nos gustaria saber mas de usted y sus necesidade como inquilino.")
+st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino.")
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info(
     "La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "

@@ -8,21 +8,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
-import requests
-
 
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
-
-def obtener_user_agent():
-    try:
-        res = requests.get("https://httpbin.org/user-agent")
-        if res.ok:
-            return res.json()["user-agent"]
-        else:
-            return "Desconocido"
-    except:
-        return "Desconocido"
 
 
 # Detectar tipo de dispositivo con JavaScript y recargar con parámetro
@@ -41,29 +29,7 @@ if "tipo_dispositivo" not in st.session_state:
 
 # Capturar el valor del dispositivo desde el parámetro de la URL
 if "tipo_dispositivo" not in st.session_state:
-
-    import re
-    import streamlit as st
-    
-    user_agent = obtener_user_agent()
-
-    #user_agent = st.request.headers.get("User-Agent", "")
-
-if "tipo_dispositivo" not in st.session_state:
-    if re.search("Mobile|Android|iPhone|iPad", user_agent, re.IGNORECASE):
-        st.session_state["tipo_dispositivo"] = "Móvil"
-    else:
-        st.session_state["tipo_dispositivo"] = "PC"
-
-
-
-
-
-    
     st.session_state["tipo_dispositivo"] = ""
-
-
-
 
 if not st.session_state["tipo_dispositivo"]:
       
@@ -134,33 +100,19 @@ from pytz import timezone
 import pandas as pd
 from datetime import datetime
 
-if "registrado" not in st.session_state and st.session_state.get("tipo_dispositivo") is not None:
+if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
     uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
-    tipo_dispositivo = st.session_state.get("tipo_dispositivo", "No detectado")
+    tipo_dispositivo = st.session_state["tipo_dispositivo"]
 
-    datos_visita = {
+    visita = pd.DataFrame([{
         "Fecha": hora_visita,
-        "IP o Navegador": tipo_dispositivo,
-        "Origen": uso_detectado
-    }
+        "Dispositivo": tipo_dispositivo,
+        "Uso_interesado": uso_detectado
+    }])
 
-    try:
-        # Guardar en Google Sheets
-        sheet.append_row([
-            datos_visita["Fecha"],
-            datos_visita["IP o Navegador"],
-            datos_visita["Origen"]
-            datos_visita["IP o Navegador"] = user_agent
-
-        ])
-    except Exception as e:
-        st.warning(f"No se pudo registrar en Google Sheets: {e}")
-
-    # Guardar local en CSV
-    visita = pd.DataFrame([datos_visita])
     nombre_archivo = "registro_visitas.csv"
     archivo_existe = False
     try:
@@ -171,7 +123,6 @@ if "registrado" not in st.session_state and st.session_state.get("tipo_dispositi
 
     visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
     st.session_state["registrado"] = True
-
 
 
 

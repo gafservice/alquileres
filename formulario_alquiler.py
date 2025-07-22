@@ -115,7 +115,8 @@ if st.button("Enviar solicitud"):
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
-            sheet.append_row(list(form_data.values()))
+            sheet.append_row([form_data_ordenado[col] for col in columnas_ordenadas])
+
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
 

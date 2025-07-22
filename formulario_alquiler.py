@@ -94,7 +94,7 @@ if "registrado" not in st.session_state and st.session_state.get("tipo_dispositi
     st.session_state["registrado"] = True
 
 # Agrega la fila con los datos de la visita
-sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
+#sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
 
 from pytz import timezone
 import pandas as pd

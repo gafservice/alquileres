@@ -53,13 +53,15 @@ client = gspread.authorize(creds)
 
 sheet = client.open("registro_visitas").sheet1  # El nombre debe coincidir
 
+from datetime import datetime
+from pytz import timezone
 
-if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]:
+if "registrado" not in st.session_state and st.session_state.get("tipo_dispositivo") is not None:
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
     uso_detectado = st.session_state.get("uso_detectado", "Sin selección aún")
-    tipo_dispositivo = st.session_state["tipo_dispositivo"]
+    tipo_dispositivo = st.session_state.get("tipo_dispositivo", "No detectado")
 
     datos_visita = {
         "Fecha": hora_visita,
@@ -69,11 +71,15 @@ if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]
 
     # Guardar en Google Sheets
     try:
-        sheet.append_row([datos_visita["Fecha"], datos_visita["IP o Navegador"], datos_visita["Origen"]])
+        sheet.append_row([
+            datos_visita["Fecha"],
+            datos_visita["IP o Navegador"],
+            datos_visita["Origen"]
+        ])
     except Exception as e:
         st.warning(f"No se pudo registrar en Google Sheets: {e}")
 
-    # Guardar en archivo local
+    # Guardar en archivo local CSV
     visita = pd.DataFrame([datos_visita])
     nombre_archivo = "registro_visitas.csv"
     archivo_existe = False
@@ -85,6 +91,8 @@ if "registrado" not in st.session_state and st.session_state["tipo_dispositivo"]
 
     visita.to_csv(nombre_archivo, mode='a', index=False, header=not archivo_existe)
     st.session_state["registrado"] = True
+
+
 
 
 

@@ -114,8 +114,8 @@ if st.button("Enviar solicitud"):
             client = gspread.authorize(creds)
             sheet = client.open("Respuestas_Alquiler").sheet1
             # Verifica si la hoja está vacía (sin encabezados)
-            if sheet.row_count == 0 or not sheet.row_values(1):
-                sheet.append_row(columnas_ordenadas)  # Agrega encabezados si no existen
+            sheet.append_row([form_data_ordenado[col] for col in columnas_ordenadas])
+
 
         except Exception as e:
             st.error(f"❌ Error al guardar en Google Sheets: {e}")
@@ -156,7 +156,7 @@ Administración de Propiedades
 
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
-                server.login("geenarfa@gmail.com", "ymsezpxetvlgdhvq")
+                server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
                 server.send_message(msg)
                 if enviar_confirmacion:
                     server.send_message(confirmacion)

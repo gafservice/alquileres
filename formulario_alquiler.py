@@ -25,12 +25,7 @@ st.components.v1.iframe(
 st.video("https://youtu.be/9U7l9rvnVJc")
 
 st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidade como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles")
-
- st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
-        st.info("La información que usted proporcione será tratada con estricta confidencialidad y utilizada únicamente para fines de evaluación de su solicitud de alquiler. "
-            "Todos los datos personales, referencias y documentos adjuntos podrán ser verificados. "
-            "Ningun dato será compartirido ni almacenado sin su autorización explicita, si no se formaliza el contrato, los datos serán eliminados en su todalidad.\n\n")
-
+ 
 uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
 form_data = {}
 

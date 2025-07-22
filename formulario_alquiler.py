@@ -11,7 +11,7 @@ st.title("🏠 Consulta rápida de alquiler")
 st.markdown("¿Desea más información sobre esta propiedad o llenar un formulario express? Elija una opción a continuación:")
 
 # --- Menú inicial ---
-opcion = st.radio("Seleccione una opción", ["", "🔍 Ver más información", "📝 Llenar formulario express", "📄 Llenar formulario completo"])
+opcion = st.radio("Seleccione una opción", ["🔍 Ver más información", "📝 Llenar formulario express", "📄 Llenar formulario completo"])
 
 # --- Bloque: Información multimedia ---
 if opcion == "🔍 Ver más información":

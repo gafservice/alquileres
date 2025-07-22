@@ -32,7 +32,9 @@ if "tipo_dispositivo" not in st.session_state:
     st.session_state["tipo_dispositivo"] = ""
 
 # Capturar valor del navegador (solo si fue enviado correctamente)
-msg = st.experimental_get_query_params().get("tipo")
+m
+msg = st.query_params.get("tipo")
+
 if msg:
     st.session_state["tipo_dispositivo"] = msg[0]
 

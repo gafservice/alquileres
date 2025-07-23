@@ -36,7 +36,7 @@ if "registrado" not in st.session_state:
         client = gspread.authorize(creds)
 
         # Acceder al archivo correcto y hoja principal
-        libro = client.open("Registro de Visitas")  # Asegurarse que este es el nombre correcto
+        libro = client.open("registro_visitas")  # Asegurarse que este es el nombre correcto
         hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
 
         # Agregar nueva fila

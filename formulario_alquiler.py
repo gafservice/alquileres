@@ -11,34 +11,43 @@ import streamlit.components.v1 as components
 
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+
+
+
+#####################################################
 from datetime import datetime
 from pytz import timezone
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 
-# --- REGISTRO MÍNIMO DE VISITAS ---
 if "registrado" not in st.session_state:
-    st.session_state["registrado"] = True  # Evita múltiples registros por recarga
+    st.session_state["registrado"] = True
 
-    # Fecha y hora local en Costa Rica
-    cr_tz = timezone("America/Costa_Rica")
-    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-    # Guardar solo la fecha en Google Sheets
     try:
+        # Hora local Costa Rica
+        cr_tz = timezone("America/Costa_Rica")
+        hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+        # Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        hoja_visitas = client.open("Registro de Visitas").sheet1
+        # Acceder al archivo correcto y hoja principal
+        libro = client.open("Registro de Visitas")  # Asegurarse que este es el nombre correcto
+        hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
+
+        # Agregar nueva fila
         hoja_visitas.append_row([hora_visita])
+
     except Exception as e:
-        st.warning(f"No se pudo registrar la visita: {e}")
+        st.error("❌ Error al registrar la visita")
+        st.exception(e)
 
 
-
+############################################################
 
 
 st.title("Para uso: Habitacional / Comercial / Mixto")

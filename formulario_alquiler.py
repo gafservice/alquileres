@@ -60,6 +60,8 @@ if "registrado" not in st.session_state:
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
+navegador = streamlit_js_eval([...], key="registro_navegador")
+st.write("📦 Datos navegador:", navegador)
 
 
 ############################################################

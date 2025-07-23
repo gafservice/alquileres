@@ -18,31 +18,73 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 #####################################################
-if "registrado" not in st.session_state:
-    st.session_state["registrado"] = True
-    st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
+import streamlit as st
+from streamlit_js_eval import streamlit_js_eval
+from datetime import datetime
+from pytz import timezone
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
 
-    cr_tz = timezone("America/Costa_Rica")
-    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+st.markdown("### 🔍 Información técnica del navegador")
 
-    import platform
-    sistema = platform.system() + " " + platform.release()
+if st.button("📊 Enviar más información del dispositivo"):
+    datos = streamlit_js_eval(
+        js_expressions=[
+            "navigator.userAgent",                                      # 0
+            "navigator.language",                                       # 1
+            "navigator.languages",                                      # 2
+            "navigator.platform",                                       # 3
+            "navigator.onLine",                                         # 4
+            "screen.width", "screen.height",                            # 5–6
+            "screen.availWidth", "screen.availHeight",                  # 7–8
+            "window.innerWidth", "window.innerHeight",                  # 9–10
+            "screen.orientation.type",                                  # 11
+            "navigator.cookieEnabled",                                  # 12
+            "window.devicePixelRatio",                                  # 13
+            "new Date().toString()",                                    # 14
+            "Intl.DateTimeFormat().resolvedOptions().timeZone"          # 15
+        ],
+        key="info_ampliada"
+    )
 
+    if datos is None:
+        st.warning("⌛ Cargando datos del navegador...")
+        st.stop()
+
+    # Visualizar como tabla
+    etiquetas = [
+        "User-Agent", "Idioma principal", "Idiomas preferidos", "Plataforma",
+        "¿Está en línea?", "Resolución pantalla (ancho)", "Resolución pantalla (alto)",
+        "Ancho disponible", "Alto disponible", "Ancho ventana", "Alto ventana",
+        "Orientación de pantalla", "Cookies habilitadas", "Densidad de pixeles",
+        "Hora del navegador", "Zona horaria del navegador"
+    ]
+
+    st.markdown("#### 📋 Detalles detectados")
+    for etiqueta, valor in zip(etiquetas, datos):
+        st.write(f"**{etiqueta}:**", valor)
+
+    # Guardar en Google Sheets
     try:
-        resolucion = f"{st.runtime.metrics['page']['width']}x{st.runtime.metrics['page']['height']}"
-    except:
-        resolucion = "Desconocida"
+        cr_tz = timezone("America/Costa_Rica")
+        hora_local = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
-    try:
+        fila = [hora_local] + datos
+
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
-        hoja_visitas = client.open("registro_visitas").sheet1
-        hoja_visitas.append_row([hora_visita, sistema, resolucion, st.session_state["visita_id"]])
+
+        hoja = client.open("registro_visitas").sheet1  # Cambiá si usás otro archivo/hoja
+        hoja.append_row(fila)
+
+        st.success("✅ Información técnica registrada correctamente.")
     except Exception as e:
-        st.error("❌ Error al registrar la visita")
+        st.error("❌ Error al registrar la información técnica.")
         st.exception(e)
+
 
 
 

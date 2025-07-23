@@ -26,7 +26,7 @@ import json
 from streamlit_js_eval import streamlit_js_eval
 import streamlit as st
 
-# Capturar datos del navegador
+# Capturar datos del navegador (SIEMPRE)
 navegador = streamlit_js_eval(
     js_expressions=[
         "navigator.userAgent",
@@ -37,36 +37,39 @@ navegador = streamlit_js_eval(
     key="registro_navegador"
 )
 
-# Esperar a que lleguen los datos
+# Esperar respuesta del navegador (st.stop detiene todo si aún no hay datos)
 if navegador is None:
     st.stop()
 
-# Solo ejecuta una vez por sesión
+# Ahora que ya hay datos, verificar si ya registramos
 if "registrado" not in st.session_state:
+    # Marcar como registrado
     st.session_state["registrado"] = True
     st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
 
-    # Asignar datos
+    # Extraer datos del navegador
     user_agent = navegador[0]
     resolucion = f"{navegador[1]}x{navegador[2]}"
     idioma = navegador[3]
 
-    # Fecha y hora local
+    # Fecha y hora en zona horaria CR
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
-    # Mostrar en pantalla para verificar (opcional)
+    # Mostrar en pantalla (opcional)
     st.write("🕒 Fecha:", hora_visita)
     st.write("🧭 Navegador:", user_agent)
     st.write("📐 Resolución:", resolucion)
     st.write("🌐 Idioma:", idioma)
 
     try:
-        # Conexión con Google Sheets
+        # Autenticación con Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
+
+        # Abrir hoja
         hoja = client.open("registro_visitas").sheet1
 
         # Guardar fila
@@ -75,7 +78,6 @@ if "registrado" not in st.session_state:
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
-
 
 
 ############################################################

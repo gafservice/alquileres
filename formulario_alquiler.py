@@ -23,61 +23,32 @@ from pytz import timezone
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
-from streamlit_js_eval import streamlit_js_eval
-import streamlit as st
 
-# Capturar datos del navegador (SIEMPRE)
-navegador = streamlit_js_eval(
-    js_expressions=[
-        "navigator.userAgent",
-        "screen.width",
-        "screen.height",
-        "navigator.language"
-    ],
-    key="registro_navegador"
-)
-
-# Esperar respuesta del navegador (st.stop detiene todo si aún no hay datos)
-if navegador is None:
-    st.stop()
-
-# Ahora que ya hay datos, verificar si ya registramos
 if "registrado" not in st.session_state:
-    # Marcar como registrado
     st.session_state["registrado"] = True
-    st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
-
-    # Extraer datos del navegador
-    user_agent = navegador[0]
-    resolucion = f"{navegador[1]}x{navegador[2]}"
-    idioma = navegador[3]
-
-    # Fecha y hora en zona horaria CR
-    cr_tz = timezone("America/Costa_Rica")
-    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-    # Mostrar en pantalla (opcional)
-    st.write("🕒 Fecha:", hora_visita)
-    st.write("🧭 Navegador:", user_agent)
-    st.write("📐 Resolución:", resolucion)
-    st.write("🌐 Idioma:", idioma)
 
     try:
-        # Autenticación con Google Sheets
+        # Hora local Costa Rica
+        cr_tz = timezone("America/Costa_Rica")
+        hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+        # Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        # Abrir hoja
-        hoja = client.open("registro_visitas").sheet1
+        # Acceder al archivo correcto y hoja principal
+        libro = client.open("registro_visitas")  # Asegurarse que este es el nombre correcto
+        hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
 
-        # Guardar fila
-        hoja.append_row([hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]])
-        st.success("✅ Visita registrada correctamente.")
+        # Agregar nueva fila
+        hoja_visitas.append_row([hora_visita])
+
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
+
 
 
 ############################################################

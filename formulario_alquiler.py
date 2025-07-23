@@ -9,42 +9,42 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 
+from streamlit_js_eval import streamlit_js_eval
+
+
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 
 #####################################################
-from datetime import datetime
-from pytz import timezone
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import json
-
 if "registrado" not in st.session_state:
     st.session_state["registrado"] = True
+    st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
+
+    cr_tz = timezone("America/Costa_Rica")
+    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+    import platform
+    sistema = platform.system() + " " + platform.release()
 
     try:
-        # Hora local Costa Rica
-        cr_tz = timezone("America/Costa_Rica")
-        hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+        resolucion = f"{st.runtime.metrics['page']['width']}x{st.runtime.metrics['page']['height']}"
+    except:
+        resolucion = "Desconocida"
 
-        # Autenticación Google Sheets
+    try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
-
-        # Acceder al archivo correcto y hoja principal
-        libro = client.open("registro_visitas")  # Asegurarse que este es el nombre correcto
-        hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
-
-        # Agregar nueva fila
-        hoja_visitas.append_row([hora_visita])
-
+        hoja_visitas = client.open("registro_visitas").sheet1
+        hoja_visitas.append_row([hora_visita, sistema, resolucion, st.session_state["visita_id"]])
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
+
+
 
 
 ############################################################
@@ -192,7 +192,8 @@ Administración de Propiedades
 
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
-                server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                server.login("admin@vigias.net", st.secrets["ymsezpxetvlgdhvq"])
+                #server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
                 server.send_message(msg)
                 if enviar_confirmacion:
                     server.send_message(confirmacion)

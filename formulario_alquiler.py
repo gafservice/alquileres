@@ -25,7 +25,15 @@ try:
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
     client = gspread.authorize(creds)
 
-    hoja = client.open("registro_visitas").sheet1
+     fila = [hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]]
+    st.write("📤 Datos a guardar:", fila)
+
+    if all(fila):
+        hoja.append_row(fila)
+        st.success("✅ Visita registrada correctamente.")
+    else:
+        st.warning("⚠️ No se registró: algunos campos están vacíos.")
+
     st.write("✅ Conectado a hoja:", hoja.title)
 
     hoja.append_row(["Prueba", "Test", "123x456", "es-CR", "demo"])

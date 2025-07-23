@@ -32,7 +32,7 @@ if "registrado" not in st.session_state:
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        hoja_visitas = client.open("Respuestas_Alquiler").worksheet("registro_visitas")
+        hoja_visitas = client.open("Registro de Visitas").sheet1
         hoja_visitas.append_row([hora_visita])
     except Exception as e:
         st.warning(f"No se pudo registrar la visita: {e}")

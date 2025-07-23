@@ -18,72 +18,21 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 #####################################################
-import streamlit as st
-from streamlit_js_eval import streamlit_js_eval
-from datetime import datetime
-from pytz import timezone
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import json
+try:
+    st.write("🛠️ Conectando a Google Sheets...")
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+    client = gspread.authorize(creds)
 
-st.markdown("### 🔍 Información técnica del navegador")
+    hoja = client.open("registro_visitas").sheet1
+    st.write("✅ Conectado a hoja:", hoja.title)
 
-if st.button("📊 Enviar más información del dispositivo"):
-    datos = streamlit_js_eval(
-        js_expressions=[
-            "navigator.userAgent",                                      # 0
-            "navigator.language",                                       # 1
-            "navigator.languages",                                      # 2
-            "navigator.platform",                                       # 3
-            "navigator.onLine",                                         # 4
-            "screen.width", "screen.height",                            # 5–6
-            "screen.availWidth", "screen.availHeight",                  # 7–8
-            "window.innerWidth", "window.innerHeight",                  # 9–10
-            "screen.orientation.type",                                  # 11
-            "navigator.cookieEnabled",                                  # 12
-            "window.devicePixelRatio",                                  # 13
-            "new Date().toString()",                                    # 14
-            "Intl.DateTimeFormat().resolvedOptions().timeZone"          # 15
-        ],
-        key="info_ampliada"
-    )
-
-    if datos is None:
-        st.warning("⌛ Cargando datos del navegador...")
-        st.stop()
-
-    # Visualizar como tabla
-    etiquetas = [
-        "User-Agent", "Idioma principal", "Idiomas preferidos", "Plataforma",
-        "¿Está en línea?", "Resolución pantalla (ancho)", "Resolución pantalla (alto)",
-        "Ancho disponible", "Alto disponible", "Ancho ventana", "Alto ventana",
-        "Orientación de pantalla", "Cookies habilitadas", "Densidad de pixeles",
-        "Hora del navegador", "Zona horaria del navegador"
-    ]
-
-    st.markdown("#### 📋 Detalles detectados")
-    for etiqueta, valor in zip(etiquetas, datos):
-        st.write(f"**{etiqueta}:**", valor)
-
-    # Guardar en Google Sheets
-    try:
-        cr_tz = timezone("America/Costa_Rica")
-        hora_local = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-        fila = [hora_local] + datos
-
-        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
-        client = gspread.authorize(creds)
-
-        hoja = client.open("registro_visitas").sheet1  # Cambiá si usás otro archivo/hoja
-        hoja.append_row(fila)
-
-        st.success("✅ Información técnica registrada correctamente.")
-    except Exception as e:
-        st.error("❌ Error al registrar la información técnica.")
-        st.exception(e)
+    hoja.append_row(["Prueba", "Test", "123x456", "es-CR", "demo"])
+    st.success("✅ Fila de prueba guardada con éxito.")
+except Exception as e:
+    st.error("❌ Error al escribir en la hoja")
+    st.exception(e)
 
 
 

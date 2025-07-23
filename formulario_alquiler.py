@@ -18,48 +18,49 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 #####################################################
-if "registrado" not in st.session_state:
-    st.session_state["registrado"] = True
-    st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
+import streamlit as st
+from datetime import datetime
+from pytz import timezone
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
+from streamlit_js_eval import streamlit_js_eval
 
-    navegador = streamlit_js_eval(
-        js_expressions=[
-            "navigator.userAgent",
-            "screen.width",
-            "screen.height",
-            "navigator.language"
-        ],
-        key="registro_navegador"
-    )
+navegador = streamlit_js_eval(
+    js_expressions=[
+        "navigator.userAgent",
+        "screen.width",
+        "screen.height",
+        "navigator.language"
+    ],
+    key="registro_navegador"
+)
 
-    if navegador is None or any(n is None for n in navegador):
-        st.warning("⚠️ Datos del navegador incompletos.")
-        st.stop()
+if navegador is None or any(n is None for n in navegador):
+    st.stop()
 
-    user_agent = navegador[0]
-    resolucion = f"{navegador[1]}x{navegador[2]}"
-    idioma = navegador[3]
+user_agent = navegador[0]
+resolucion = f"{navegador[1]}x{navegador[2]}"
+idioma = navegador[3]
+cr_tz = timezone("America/Costa_Rica")
+hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+visita_id = datetime.now().strftime("%H%M%S")
 
-    cr_tz = timezone("America/Costa_Rica")
-    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+fila = [hora_visita, user_agent, resolucion, idioma, visita_id]
+st.write("📤 Datos a enviar:", fila)
 
-    fila = [hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]]
-    st.write("📤 Datos a guardar:", fila)
+try:
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+    client = gspread.authorize(creds)
+    hoja = client.open("registro_visitas").sheet1
+    hoja.append_row(fila)
+    st.success("✅ Visita registrada correctamente.")
+except Exception as e:
+    st.error("❌ Error al registrar en Google Sheets")
+    st.exception(e)
 
-    try:
-        if all(fila):
-            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-            credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
-            creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
-            client = gspread.authorize(creds)
-            hoja = client.open("registro_visitas").sheet1
-            hoja.append_row(fila)
-            st.success("✅ Visita registrada correctamente.")
-        else:
-            st.warning("⚠️ No se registró: algunos campos están vacíos.")
-    except Exception as e:
-        st.error("❌ Error al escribir en la hoja")
-        st.exception(e)
 
 
 

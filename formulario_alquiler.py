@@ -17,51 +17,65 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 
-
-
-
 #####################################################
+from datetime import datetime
+from pytz import timezone
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
 from streamlit_js_eval import streamlit_js_eval
+import streamlit as st
 
+# Capturar datos del navegador
+navegador = streamlit_js_eval(
+    js_expressions=[
+        "navigator.userAgent",
+        "screen.width",
+        "screen.height",
+        "navigator.language"
+    ],
+    key="registro_navegador"
+)
+
+# Esperar a que lleguen los datos
+if navegador is None:
+    st.stop()
+
+# Solo ejecuta una vez por sesión
 if "registrado" not in st.session_state:
-    navegador = streamlit_js_eval(
-        js_expressions=[
-            "navigator.userAgent",
-            "screen.width",
-            "screen.height",
-            "navigator.language"
-        ],
-        key="registro_navegador"
-    )
-
-    if navegador is None:
-        st.stop()  # Espera hasta que navegador tenga valor
-
-    # Solo se ejecuta una vez que navegador devuelve datos reales
     st.session_state["registrado"] = True
     st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
 
+    # Asignar datos
     user_agent = navegador[0]
     resolucion = f"{navegador[1]}x{navegador[2]}"
     idioma = navegador[3]
 
+    # Fecha y hora local
     cr_tz = timezone("America/Costa_Rica")
     hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
+    # Mostrar en pantalla para verificar (opcional)
+    st.write("🕒 Fecha:", hora_visita)
+    st.write("🧭 Navegador:", user_agent)
+    st.write("📐 Resolución:", resolucion)
+    st.write("🌐 Idioma:", idioma)
+
     try:
+        # Conexión con Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
-        hoja_visitas = client.open("registro_visitas").sheet1
+        hoja = client.open("registro_visitas").sheet1
 
-        hoja_visitas.append_row([hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]])
-        st.success("✅ Visita registrada")
+        # Guardar fila
+        hoja.append_row([hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]])
+        st.success("✅ Visita registrada correctamente.")
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
-    navegador = streamlit_js_eval([...], key="registro_navegador")
-    st.write("📦 Datos navegador:", navegador)
+
 
 
 ############################################################

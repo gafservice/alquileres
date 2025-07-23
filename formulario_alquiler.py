@@ -25,7 +25,7 @@ try:
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
     client = gspread.authorize(creds)
 
-     fila = [hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]]
+    fila = [hora_visita, user_agent, resolucion, idioma, st.session_state["visita_id"]]
     st.write("📤 Datos a guardar:", fila)
 
     if all(fila):

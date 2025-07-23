@@ -9,42 +9,42 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 
-from streamlit_js_eval import streamlit_js_eval
-
-
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 
 
 
 #####################################################
+from datetime import datetime
+from pytz import timezone
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
+
 if "registrado" not in st.session_state:
     st.session_state["registrado"] = True
-    st.session_state["visita_id"] = datetime.now().strftime("%H%M%S")
-
-    cr_tz = timezone("America/Costa_Rica")
-    hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-
-    import platform
-    sistema = platform.system() + " " + platform.release()
 
     try:
-        resolucion = f"{st.runtime.metrics['page']['width']}x{st.runtime.metrics['page']['height']}"
-    except:
-        resolucion = "Desconocida"
+        # Hora local Costa Rica
+        cr_tz = timezone("America/Costa_Rica")
+        hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
-    try:
+        # Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
-        hoja_visitas = client.open("registro_visitas").sheet1
-        hoja_visitas.append_row([hora_visita, sistema, resolucion, st.session_state["visita_id"]])
+
+        # Acceder al archivo correcto y hoja principal
+        libro = client.open("registro_visitas")  # Asegurarse que este es el nombre correcto
+        hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
+
+        # Agregar nueva fila
+        hoja_visitas.append_row([hora_visita])
+
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
-
-
 
 
 ############################################################
@@ -168,3 +168,51 @@ if st.button("Enviar solicitud"):
             correo_usuario = form_data.get("Correo electronico", "").strip()
             enviar_confirmacion = correo_usuario and "@" in correo_usuario
 
+            if enviar_confirmacion:
+                cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+
+
+
+
+Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
+Resumen de su envío:
+----------------------------------
+{cuerpo_admin}
+----------------------------------
+Gracias por confiar en nosotros.
+
+Atentamente,
+Administración de Propiedades
+"""
+                confirmacion = EmailMessage()
+                confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
+                confirmacion["From"] = "admin@vigias.net"
+                confirmacion["To"] = correo_usuario
+                confirmacion.set_content(cuerpo_usuario)
+
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login("admin@vigias.net", st.secrets["SMTP_PASSWORD"])
+                #server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                server.send_message(msg)
+                if enviar_confirmacion:
+                    server.send_message(confirmacion)
+        except Exception as e:
+            st.error(f"❌ Error al enviar correo: {e}")
+
+        # ✅ Guardar archivo adjunto
+        if archivo:
+            try:
+                nombre_archivo = f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}"
+                with open(nombre_archivo, "wb") as f:
+                    f.write(archivo.read())
+                st.success(f"📎 Archivo guardado exitosamente: {nombre_archivo}")
+            except Exception as e:
+                st.error(f"❌ Error al guardar archivo adjunto: {e}")
+
+        # ✅ Confirmación final
+        st.success("✅ ¡Solicitud enviada con éxito!")
+       
+
+        
+        st.info("Si desea generar un sistema similar para el alquiler de sus bienes inmuebles, puede contactarnos a: info@vigias.net") 

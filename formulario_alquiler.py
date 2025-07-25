@@ -19,7 +19,13 @@ st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a 
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
 
 st.markdown("### 📍 Ubicación del inmueble")
+st.components.v1.iframe(
+    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d245.67975692153937!2d-84.05487347043625!3d9.86076000110528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scr!4v1752880163707!5m2!1ses-419!2scr",
+    height=450,
+    width=600
+)
 
+st.video("https://youtu.be/9U7l9rvnVJc")
 
 ############################################################
 
@@ -131,21 +137,6 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
 
 ############################################################
 ############################################################
-
-
-st.title("Para uso: Habitacional / Comercial / Mixto")
-
-st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
-st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
-
-st.markdown("### 📍 Ubicación del inmueble")
-st.components.v1.iframe(
-    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d245.67975692153937!2d-84.05487347043625!3d9.86076000110528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scr!4v1752880163707!5m2!1ses-419!2scr",
-    height=450,
-    width=600
-)
-
-st.video("https://youtu.be/9U7l9rvnVJc")
 
 st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidades como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles.")
 

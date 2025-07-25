@@ -8,10 +8,15 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
+from streamlit_javascript import st_javascript
 
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+############################################################
 
+
+
+############################################################
 
 
 #####################################################
@@ -20,7 +25,16 @@ from pytz import timezone
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+from streamlit_javascript import st_javascript  # ✅ Asegurate de tenerlo
 
+# Capturar automáticamente el navegador
+user_agent = st_javascript("""await navigator.userAgent""")
+if user_agent:
+    st.session_state["tipo_dispositivo"] = user_agent
+else:
+    st.session_state["tipo_dispositivo"] = "No detectado"
+
+# Solo registrar una vez por sesión
 if "registrado" not in st.session_state:
     st.session_state["registrado"] = True
 
@@ -28,6 +42,7 @@ if "registrado" not in st.session_state:
         # Hora local Costa Rica
         cr_tz = timezone("America/Costa_Rica")
         hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+        tipo_dispositivo = st.session_state.get("tipo_dispositivo", "No detectado")
 
         # Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -36,17 +51,18 @@ if "registrado" not in st.session_state:
         client = gspread.authorize(creds)
 
         # Acceder al archivo correcto y hoja principal
-        libro = client.open("registro_visitas")  # Asegurarse que este es el nombre correcto
-        hoja_visitas = libro.sheet1  # o libro.worksheet("Hoja1") si el nombre es diferente
+        libro = client.open("registro_visitas")
+        hoja_visitas = libro.sheet1
 
-        # Agregar nueva fila
-        hoja_visitas.append_row([hora_visita])
+        # Agregar nueva fila con fecha y tipo de dispositivo
+        hoja_visitas.append_row([hora_visita, tipo_dispositivo])
 
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
 
 
+############################################################
 ############################################################
 
 

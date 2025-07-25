@@ -27,37 +27,75 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 from streamlit_javascript import st_javascript
 
-# 🔍 Intentar capturar el userAgent del navegador
+# 🔍 Captura automática del userAgent del navegador
 user_agent = st_javascript("""await navigator.userAgent""")
 if user_agent:
-    st.session_state["tipo_dispositivo"] = user_agent
+    st.session_state["tipo_dispositivo_raw"] = user_agent
 
-# Solo registrar visita una vez y cuando se haya obtenido el userAgent
-if "registrado" not in st.session_state and "tipo_dispositivo" in st.session_state:
+
+# 🔍 Función para convertir userAgent en descripción legible
+def describir_dispositivo(ua):
+    if "Android" in ua:
+        tipo = "Android"
+        categoria = "Móvil"
+    elif "iPhone" in ua or "iPad" in ua:
+        tipo = "Apple"
+        categoria = "Móvil"
+    elif "Windows" in ua:
+        tipo = "Windows PC"
+        categoria = "Escritorio"
+    elif "Macintosh" in ua:
+        tipo = "Mac"
+        categoria = "Escritorio"
+    elif "Linux" in ua:
+        tipo = "Linux PC"
+        categoria = "Escritorio"
+    else:
+        tipo = "Otro"
+        categoria = "Desconocido"
+
+    if "Firefox" in ua:
+        navegador = "Firefox"
+    elif "Chrome" in ua and "Edg" not in ua:
+        navegador = "Chrome"
+    elif "Safari" in ua and "Chrome" not in ua:
+        navegador = "Safari"
+    elif "Edg" in ua:
+        navegador = "Edge"
+    else:
+        navegador = "Desconocido"
+
+    return f"{tipo} ({navegador}) - {categoria}"
+
+
+# 📝 Registrar una sola vez por sesión y solo si ya se capturó el userAgent
+if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session_state:
     st.session_state["registrado"] = True
 
     try:
-        # 🕒 Hora local Costa Rica
         cr_tz = timezone("America/Costa_Rica")
         hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-        tipo_dispositivo = st.session_state["tipo_dispositivo"]
 
-        # 📄 Autenticación Google Sheets
+        tipo_dispositivo_raw = st.session_state["tipo_dispositivo_raw"]
+        tipo_dispositivo_legible = describir_dispositivo(tipo_dispositivo_raw)
+
+        # 🔐 Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        # 📋 Abrir hoja
+        # 📋 Hoja de registro
         libro = client.open("registro_visitas")
         hoja_visitas = libro.sheet1
 
-        # ➕ Agregar fila con hora y dispositivo
-        hoja_visitas.append_row([hora_visita, tipo_dispositivo])
+        # ✅ Guardar fila: hora + descripción legible
+        hoja_visitas.append_row([hora_visita, tipo_dispositivo_legible])
 
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
+
 
 
 

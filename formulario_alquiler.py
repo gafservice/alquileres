@@ -29,9 +29,25 @@ from streamlit_javascript import st_javascript
 
 # 🔍 Captura automática del userAgent del navegador
 user_agent = st_javascript("""await navigator.userAgent""")
+
+# Captura de idioma del navegador
+idioma = st_javascript("""await navigator.language""")
+if idioma:
+    st.session_state["idioma_navegador"] = idioma
+
+# Captura de zona horaria del navegador
+zona = st_javascript("""await Intl.DateTimeFormat().resolvedOptions().timeZone""")
+if zona:
+    st.session_state["zona_horaria_navegador"] = zona
+
+# Captura de resolución de pantalla
+resolucion = st_javascript("""[window.screen.width, window.screen.height].join('x')""")
+if resolucion:
+    st.session_state["resolucion_pantalla"] = resolucion
+
+# Guardar el user agent crudo si está disponible
 if user_agent:
     st.session_state["tipo_dispositivo_raw"] = user_agent
-
 
 # 🔍 Función para convertir userAgent en descripción legible
 def describir_dispositivo(ua):
@@ -67,30 +83,39 @@ def describir_dispositivo(ua):
 
     return f"{tipo} ({navegador}) - {categoria}"
 
-
 # 📝 Registrar una sola vez por sesión y solo si ya se capturó el userAgent
 if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session_state:
     st.session_state["registrado"] = True
 
     try:
+        # Fecha y hora local (Costa Rica)
         cr_tz = timezone("America/Costa_Rica")
         hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
 
         tipo_dispositivo_raw = st.session_state["tipo_dispositivo_raw"]
         tipo_dispositivo_legible = describir_dispositivo(tipo_dispositivo_raw)
+        idioma = st.session_state.get("idioma_navegador", "Desconocido")
+        zona = st.session_state.get("zona_horaria_navegador", "Desconocida")
+        resolucion = st.session_state.get("resolucion_pantalla", "Desconocida")
 
-        # 🔐 Autenticación Google Sheets
+        # Conexión con Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        # 📋 Hoja de registro
+        # Hoja de registro
         libro = client.open("registro_visitas")
         hoja_visitas = libro.sheet1
 
-        # ✅ Guardar fila: hora + descripción legible
-        hoja_visitas.append_row([hora_visita, tipo_dispositivo_legible])
+        # Agregar fila con todos los datos
+        hoja_visitas.append_row([
+            hora_visita,
+            tipo_dispositivo_legible,
+            idioma,
+            zona,
+            resolucion
+        ])
 
     except Exception as e:
         st.error("❌ Error al registrar la visita")

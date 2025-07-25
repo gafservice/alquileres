@@ -25,41 +25,40 @@ from pytz import timezone
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
-from streamlit_javascript import st_javascript  # ✅ Asegurate de tenerlo
+from streamlit_javascript import st_javascript
 
-# Capturar automáticamente el navegador
+# 🔍 Intentar capturar el userAgent del navegador
 user_agent = st_javascript("""await navigator.userAgent""")
 if user_agent:
     st.session_state["tipo_dispositivo"] = user_agent
-else:
-    st.session_state["tipo_dispositivo"] = "No detectado"
 
-# Solo registrar una vez por sesión
-if "registrado" not in st.session_state:
+# Solo registrar visita una vez y cuando se haya obtenido el userAgent
+if "registrado" not in st.session_state and "tipo_dispositivo" in st.session_state:
     st.session_state["registrado"] = True
 
     try:
-        # Hora local Costa Rica
+        # 🕒 Hora local Costa Rica
         cr_tz = timezone("America/Costa_Rica")
         hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
-        tipo_dispositivo = st.session_state.get("tipo_dispositivo", "No detectado")
+        tipo_dispositivo = st.session_state["tipo_dispositivo"]
 
-        # Autenticación Google Sheets
+        # 📄 Autenticación Google Sheets
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
         creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
         client = gspread.authorize(creds)
 
-        # Acceder al archivo correcto y hoja principal
+        # 📋 Abrir hoja
         libro = client.open("registro_visitas")
         hoja_visitas = libro.sheet1
 
-        # Agregar nueva fila con fecha y tipo de dispositivo
+        # ➕ Agregar fila con hora y dispositivo
         hoja_visitas.append_row([hora_visita, tipo_dispositivo])
 
     except Exception as e:
         st.error("❌ Error al registrar la visita")
         st.exception(e)
+
 
 
 ############################################################

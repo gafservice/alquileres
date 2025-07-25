@@ -13,7 +13,12 @@ from streamlit_javascript import st_javascript
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
+st.title("Para uso: Habitacional / Comercial / Mixto")
 
+st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
+st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
+
+st.markdown("### 📍 Ubicación del inmueble")
 
 
 ############################################################

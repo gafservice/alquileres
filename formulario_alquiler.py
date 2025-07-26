@@ -13,14 +13,21 @@ from streamlit_javascript import st_javascript
 import openai
 import streamlit as st
 
-openai.api_key = st.secrets["openai"]["api_key"]
+import streamlit as st
+import openai
+
+client = openai.OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 if st.button("Probar conexión con ChatGPT"):
-    respuesta = openai.ChatCompletion.create(
+    respuesta = client.chat.completions.create(
         model="gpt-4",
-        messages=[{"role": "user", "content": "Hola, ¿me escuchás?"}]
+        messages=[
+            {"role": "user", "content": "Hola, ¿me escuchás?"}
+        ]
     )
-    st.write("ChatGPT responde:", respuesta.choices[0].message.content)
+    st.markdown("**ChatGPT responde:**")
+    st.write(respuesta.choices[0].message.content)
+
 
 
 

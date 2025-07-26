@@ -9,11 +9,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
-
-import openai
-import streamlit as st
-
-import streamlit as st
 import openai
 
 client = openai.OpenAI(api_key=st.secrets["openai"]["api_key"])
@@ -27,13 +22,6 @@ if st.button("Probar conexión con ChatGPT"):
     )
     st.markdown("**ChatGPT responde:**")
     st.write(respuesta.choices[0].message.content)
-
-
-
-
-
-
-
 
 
 

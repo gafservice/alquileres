@@ -33,10 +33,6 @@ if st.button("Probar conexión con ChatGPT"):
 
 
 
-
-
-
-
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 st.title("Para uso: Habitacional / Comercial / Mixto")

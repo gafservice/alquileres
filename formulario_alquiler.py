@@ -13,7 +13,6 @@ import openai
 
 from openai import OpenAI
 
-# Inicializar cliente moderno
 client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 st.title("🔌 Prueba de conexión con ChatGPT")
@@ -26,10 +25,8 @@ if st.button("Probar conexión con ChatGPT"):
                 {"role": "user", "content": "Hola, ¿me escuchás?"}
             ]
         )
-        mensaje = respuesta.choices[0].message.content
         st.success("✅ Conexión exitosa con ChatGPT")
-        st.markdown("**Asistente:** " + mensaje)
-
+        st.markdown("**Asistente:** " + respuesta.choices[0].message.content)
     except Exception as e:
         st.error("❌ Ocurrió un error al conectarse con la API de OpenAI.")
         st.exception(e)

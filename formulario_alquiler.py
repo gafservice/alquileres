@@ -10,6 +10,28 @@ from pytz import timezone
 import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
 
+import openai
+import streamlit as st
+
+openai.api_key = st.secrets["openai"]["api_key"]
+
+if st.button("Probar conexión con ChatGPT"):
+    respuesta = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": "Hola, ¿me escuchás?"}]
+    )
+    st.write("ChatGPT responde:", respuesta.choices[0].message.content)
+
+
+
+
+
+
+
+
+
+
+
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################

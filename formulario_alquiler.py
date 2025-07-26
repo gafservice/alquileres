@@ -116,8 +116,12 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
         client = gspread.authorize(creds)
 
         # Hoja de registro
-        libro = client.open("registro_visitas")
-        hoja_visitas = libro.sheet1
+
+        libro = client.open("Respuestas_Alquiler")
+        hoja_visitas = libro.worksheet("Visitas")
+
+        #libro = client.open("registro_visitas")
+        #hoja_visitas = libro.sheet1
 
         # Agregar fila con todos los datos
         hoja_visitas.append_row([
@@ -222,7 +226,10 @@ if st.button("Enviar solicitud"):
             credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
             creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
             client = gspread.authorize(creds)
-            sheet = client.open("Respuestas_Alquiler").sheet1
+            #####
+            sheet = client.open("Respuestas_Alquiler").worksheet("Formulario_Completo")
+
+            ##sheet = client.open("Respuestas_Alquiler").sheet1
             # Verifica si la hoja está vacía (sin encabezados)
             sheet.append_row([form_data_ordenado[col] for col in columnas_ordenadas])
 

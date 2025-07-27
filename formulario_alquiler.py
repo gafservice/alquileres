@@ -21,7 +21,7 @@ import streamlit as st
 import openai
 
 # 🔐 Cargar la API key desde secrets
-openai.api_key = st.secrets["openai"]["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"]
+openai.api_key = st.secrets["openai"]["api_key"]
 
 st.title("🤖 ChatGPT desde Streamlit")
 

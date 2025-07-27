@@ -19,7 +19,6 @@ from openai import OpenAI
 
 # Leer desde secrets.toml
 api_key = st.secrets["openai"]["api_key"]
-org_id = st.secrets["openai"]["organization"]
 
 # Crear cliente
 client = OpenAI(api_key=api_key, organization=org_id)

@@ -21,7 +21,7 @@ from openai import OpenAI
 api_key = st.secrets["openai"]["api_key"]
 
 # Crear cliente
-client = OpenAI(api_key=api_key, organization=org_id)
+client = OpenAI(api_key=api_key)
 
 # Función de generación
 def generar_respuesta(prompt):

@@ -13,58 +13,7 @@ from openai import OpenAI
 import os
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
-############################################################
-import streamlit as st
-from openai import OpenAI
-import os
-
-# Leer clave API desde secrets
-api_key = st.secrets["openai"]["api_key"]
-
-# Crear cliente
-client = OpenAI(api_key=api_key)
-
-st.title("💬 Chat OpenAI vía Streamlit")
-st.write("Ingrese un mensaje para el modelo GPT.")
-
-mensaje = st.text_input("Mensaje:")
-
-if mensaje:
-    try:
-        respuesta = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": mensaje}]
-        )
-        st.success(respuesta.choices[0].message.content)
-    except Exception as e:
-        st.error(f"❌ Error al llamar a OpenAI: {e}")
-
-
-
-
-
-
-
-
-############################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 st.title("Para uso: Habitacional / Comercial / Mixto")
-
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
 

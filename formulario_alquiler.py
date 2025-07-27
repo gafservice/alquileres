@@ -14,10 +14,16 @@ import openai
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
-from openai import OpenAI
 
 # 🔐 Cargar la API key desde secrets
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=st.secrets["openai"]["api_key"],
+    organization=st.secrets["openai"]["org_id"],
+    project=st.secrets["openai"]["project_id"]
+)
+
 
 st.title("🤖 ChatGPT desde Streamlit")
 

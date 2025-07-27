@@ -14,17 +14,30 @@ import os
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
+import streamlit as st
 from openai import OpenAI
+import os
 
-client = OpenAI(api_key="sk-...")  # Pega aquí tu nueva clave
+# Leer clave API desde secrets
+api_key = st.secrets["openai"]["api_key"]
 
-chat = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[{"role": "user", "content": "Hola"}]
-)
+# Crear cliente
+client = OpenAI(api_key=api_key)
 
-print(chat.choices[0].message.content)
+st.title("💬 Chat OpenAI vía Streamlit")
+st.write("Ingrese un mensaje para el modelo GPT.")
 
+mensaje = st.text_input("Mensaje:")
+
+if mensaje:
+    try:
+        respuesta = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": mensaje}]
+        )
+        st.success(respuesta.choices[0].message.content)
+    except Exception as e:
+        st.error(f"❌ Error al llamar a OpenAI: {e}")
 
 
 

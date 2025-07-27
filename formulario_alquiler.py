@@ -14,42 +14,34 @@ import os
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
-
 import streamlit as st
 from openai import OpenAI
+import os
 
-# --- Configuración de la app
-st.set_page_config(page_title="Chat con OpenAI", page_icon="🤖")
 st.title("💬 Chat OpenAI vía Streamlit")
-
-# --- Cargar claves desde secrets
-api_key = st.secrets["openai"]["api_key"]
-org_id = st.secrets["openai"]["org_id"]
-project_id = st.secrets["openai"].get("project_id", None)
-
-# --- Crear cliente OpenAI (usando openai>=1.0.0)
-client = OpenAI(
-    api_key=api_key,
-    organization=org_id,
-    project=project_id
-)
-
-# --- Entrada de texto
 st.write("Ingrese un mensaje para el modelo GPT.")
-user_input = st.text_input("Mensaje:")
 
-if user_input:
-    with st.spinner("Esperando respuesta..."):
-        try:
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",  # También podés usar "gpt-4" si tu cuenta lo permite
-                messages=[
-                    {"role": "user", "content": user_input}
-                ]
-            )
-            st.success(response.choices[0].message.content)
-        except Exception as e:
-            st.error(f"❌ Error al llamar a OpenAI: {e}")
+# Campo para ingresar el mensaje
+mensaje_usuario = st.text_input("Mensaje:")
+
+# Inicializar cliente OpenAI
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
+# Procesar el mensaje al hacer clic
+if mensaje_usuario:
+    try:
+        respuesta = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Sos un asistente útil."},
+                {"role": "user", "content": mensaje_usuario}
+            ]
+        )
+        st.success(respuesta.choices[0].message.content)
+
+    except Exception as e:
+        st.error(f"❌ Error al llamar a OpenAI: {e}")
+
 
 
 

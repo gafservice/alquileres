@@ -16,6 +16,53 @@ from openai import OpenAI
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
+
+import streamlit as st
+import openai
+
+# 🔐 Cargar la API key desde secrets
+openai.api_key = st.secrets["openai"]["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"]
+
+st.title("🤖 ChatGPT desde Streamlit")
+
+# Entrada del usuario
+user_input = st.text_input("Escribí tu pregunta:")
+
+# Enviar a la API cuando hay texto
+if user_input:
+    with st.spinner("Pensando..."):
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4",  # podés usar "gpt-3.5-turbo" si no tenés acceso a GPT-4
+                messages=[
+                    {"role": "system", "content": "Sos un asistente útil."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            respuesta = response['choices'][0]['message']['content']
+            st.success("Respuesta de ChatGPT:")
+            st.write(respuesta)
+
+        except Exception as e:
+            st.error(f"Error: {e}")
+
+############################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 st.title("Para uso: Habitacional / Comercial / Mixto")
 
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)

@@ -11,40 +11,31 @@ import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
 import openai
 
-from openai import OpenAI
-
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
+from openai import OpenAI
 
-import streamlit as st
-import openai
-
-# 🔐 Cargar la API key desde secrets
-openai.api_key = st.secrets["openai"]["api_key"]
-
-st.title("🤖 ChatGPT desde Streamlit")
-
-# Entrada del usuario
-user_input = st.text_input("Escribí tu pregunta:")
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 # Enviar a la API cuando hay texto
 if user_input:
     with st.spinner("Pensando..."):
         try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4",  # podés usar "gpt-3.5-turbo" si no tenés acceso a GPT-4
+            response = client.chat.completions.create(
+                model="gpt-4",  # o "gpt-3.5-turbo"
                 messages=[
                     {"role": "system", "content": "Sos un asistente útil."},
                     {"role": "user", "content": user_input}
                 ]
             )
-            respuesta = response['choices'][0]['message']['content']
+            respuesta = response.choices[0].message.content
             st.success("Respuesta de ChatGPT:")
             st.write(respuesta)
 
         except Exception as e:
             st.error(f"Error: {e}")
+
 
 ############################################################################################
 

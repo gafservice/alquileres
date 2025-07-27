@@ -15,25 +15,31 @@ import os
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 
+import streamlit as st
+from openai import OpenAI
 
-
-# --- Título
+# --- Configuración de la página
 st.set_page_config(page_title="ChatGPT desde Streamlit", page_icon="🤖")
 st.title("🤖 ChatGPT desde Streamlit")
 
-# --- Campo para la API key
-api_key = st.text_input("🔑 Ingresá tu OpenAI API Key", type="password")
+# --- Leer credenciales desde secrets.toml
+api_key = st.secrets["openai"]["api_key"]
+org_id = st.secrets["openai"].get("org_id")
+project_id = st.secrets["openai"].get("project_id")
+
+# --- Inicializar cliente
+client = OpenAI(
+    api_key=api_key,
+    organization=org_id,
+    project=project_id
+)
 
 # --- Entrada del usuario
 prompt = st.text_input("Escribí tu pregunta:")
 
-# --- Cuando el usuario escribe algo
-if prompt and api_key:
+if prompt:
     try:
-        # Cliente con la API key
-        client = OpenAI(api_key=api_key)
-
-        # Solicitud a la API
+        # Enviar la consulta a ChatGPT
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
@@ -44,6 +50,9 @@ if prompt and api_key:
 
     except Exception as e:
         st.error(f"❌ Error: {e}")
+
+
+
 
 
 

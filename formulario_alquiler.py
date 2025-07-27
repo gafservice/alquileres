@@ -9,36 +9,41 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
-import openai
-
+from openai import OpenAI
+import os
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 
-st.set_page_config(page_title="ChatGPT desde Streamlit", page_icon="🤖", layout="centered")
 
+
+# --- Título
+st.set_page_config(page_title="ChatGPT desde Streamlit", page_icon="🤖")
 st.title("🤖 ChatGPT desde Streamlit")
-st.write("Escribí tu pregunta:")
 
-# Campo de entrada
-prompt = st.text_input("")
+# --- Campo para la API key
+api_key = st.text_input("🔑 Ingresá tu OpenAI API Key", type="password")
 
-# Configuración de OpenAI
-openai.api_key = st.secrets["openai"]["api_key"]
-openai.organization = st.secrets["openai"]["org_id"]
+# --- Entrada del usuario
+prompt = st.text_input("Escribí tu pregunta:")
 
-# Procesar si hay texto
-if prompt:
+# --- Cuando el usuario escribe algo
+if prompt and api_key:
     try:
-        response = openai.ChatCompletion.create(
+        # Cliente con la API key
+        client = OpenAI(api_key=api_key)
+
+        # Solicitud a la API
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
-        st.markdown("**Respuesta:**")
-        st.success(response.choices[0].message["content"])
+
+        # Mostrar la respuesta
+        st.success(response.choices[0].message.content)
 
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"❌ Error: {e}")
 
 
 

@@ -18,38 +18,39 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 import streamlit as st
 from openai import OpenAI
 
-# --- Configuración de la página
-st.set_page_config(page_title="ChatGPT desde Streamlit", page_icon="🤖")
-st.title("🤖 ChatGPT desde Streamlit")
+# --- Configuración de la app
+st.set_page_config(page_title="Chat con OpenAI", page_icon="🤖")
+st.title("💬 Chat OpenAI vía Streamlit")
 
-# --- Leer credenciales desde secrets.toml
+# --- Cargar claves desde secrets
 api_key = st.secrets["openai"]["api_key"]
-org_id = st.secrets["openai"].get("org_id")
-project_id = st.secrets["openai"].get("project_id")
+org_id = st.secrets["openai"]["org_id"]
+project_id = st.secrets["openai"].get("project_id", None)
 
-# --- Inicializar cliente
+# --- Crear cliente OpenAI (usando openai>=1.0.0)
 client = OpenAI(
     api_key=api_key,
     organization=org_id,
     project=project_id
 )
 
-# --- Entrada del usuario
-prompt = st.text_input("Escribí tu pregunta:")
+# --- Entrada de texto
+st.write("Ingrese un mensaje para el modelo GPT.")
+user_input = st.text_input("Mensaje:")
 
-if prompt:
-    try:
-        # Enviar la consulta a ChatGPT
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
+if user_input:
+    with st.spinner("Esperando respuesta..."):
+        try:
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",  # También podés usar "gpt-4" si tu cuenta lo permite
+                messages=[
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            st.success(response.choices[0].message.content)
+        except Exception as e:
+            st.error(f"❌ Error al llamar a OpenAI: {e}")
 
-        # Mostrar la respuesta
-        st.success(response.choices[0].message.content)
-
-    except Exception as e:
-        st.error(f"❌ Error: {e}")
 
 
 

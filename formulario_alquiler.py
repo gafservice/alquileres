@@ -16,7 +16,13 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 from openai import OpenAI
 
+# 🔐 Cargar la API key desde secrets
 client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
+st.title("🤖 ChatGPT desde Streamlit")
+
+# Entrada del usuario (asegurate de que esté antes del if)
+user_input = st.text_input("Escribí tu pregunta:")
 
 # Enviar a la API cuando hay texto
 if user_input:
@@ -35,6 +41,7 @@ if user_input:
 
         except Exception as e:
             st.error(f"Error: {e}")
+
 
 
 ############################################################################################

@@ -16,29 +16,33 @@ st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 import streamlit as st
 from openai import OpenAI
-import os
 
+# Leer desde secrets.toml
+api_key = st.secrets["openai"]["api_key"]
+org_id = st.secrets["openai"]["organization"]
+
+# Crear cliente
+client = OpenAI(api_key=api_key, organization=org_id)
+
+# Función de generación
+def generar_respuesta(prompt):
+    respuesta = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Eres un asistente útil."},
+            {"role": "user", "content": prompt},
+        ]
+    )
+    return respuesta.choices[0].message.content
+
+# Interfaz básica
 st.title("💬 Chat OpenAI vía Streamlit")
-st.write("Ingrese un mensaje para el modelo GPT.")
+mensaje = st.text_input("Ingrese un mensaje para el modelo GPT:")
 
-# Campo para ingresar el mensaje
-mensaje_usuario = st.text_input("Mensaje:")
-
-# Inicializar cliente OpenAI
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-
-# Procesar el mensaje al hacer clic
-if mensaje_usuario:
+if mensaje:
     try:
-        respuesta = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Sos un asistente útil."},
-                {"role": "user", "content": mensaje_usuario}
-            ]
-        )
-        st.success(respuesta.choices[0].message.content)
-
+        respuesta = generar_respuesta(mensaje)
+        st.success(respuesta)
     except Exception as e:
         st.error(f"❌ Error al llamar a OpenAI: {e}")
 

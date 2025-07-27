@@ -15,38 +15,30 @@ import openai
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 ############################################################
 
-# 🔐 Cargar la API key desde secrets
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=st.secrets["openai"]["api_key"],
-    organization=st.secrets["openai"]["org_id"],
-    project=st.secrets["openai"]["project_id"]
-)
-
+st.set_page_config(page_title="ChatGPT desde Streamlit", page_icon="🤖", layout="centered")
 
 st.title("🤖 ChatGPT desde Streamlit")
+st.write("Escribí tu pregunta:")
 
-# Entrada del usuario (asegurate de que esté antes del if)
-user_input = st.text_input("Escribí tu pregunta:")
+# Campo de entrada
+prompt = st.text_input("")
 
-# Enviar a la API cuando hay texto
-if user_input:
-    with st.spinner("Pensando..."):
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4",  # o "gpt-3.5-turbo"
-                messages=[
-                    {"role": "system", "content": "Sos un asistente útil."},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-            respuesta = response.choices[0].message.content
-            st.success("Respuesta de ChatGPT:")
-            st.write(respuesta)
+# Configuración de OpenAI
+openai.api_key = st.secrets["openai"]["api_key"]
+openai.organization = st.secrets["openai"]["org_id"]
 
-        except Exception as e:
-            st.error(f"Error: {e}")
+# Procesar si hay texto
+if prompt:
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        st.markdown("**Respuesta:**")
+        st.success(response.choices[0].message["content"])
+
+    except Exception as e:
+        st.error(f"Error: {e}")
 
 
 

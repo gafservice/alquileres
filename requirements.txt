@@ -4,6 +4,7 @@ gspread
 oauth2client
 streamlit-js-eval
 streamlit-javascript
-openai
 openai>=1.0.0
+python-dotenv
+requests
 

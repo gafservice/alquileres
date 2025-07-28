@@ -127,13 +127,13 @@ if enviado_rapido:
 
 #################################################################
 # 3️⃣ INTERACCIÓN CON GEMINI
+# 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
     st.header("🤖 Consultas sobre el inmueble")
+    st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS** para evacuar cualquier otra duda que se le presente.")
 
-    # 🔹 Nota institucional
-    #st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS** para evacuar cualquier otra duda que se le presente.")
-
+    # Inicializar Gemini
     try:
         api_key = st.secrets["generativeai"]["api_key"]
         genai.configure(api_key=api_key)
@@ -142,9 +142,11 @@ if st.session_state.get("permite_chat", False):
         st.error("❌ No se pudo inicializar Gemini.")
         st.stop()
 
+    # Extraer datos necesarios
     presupuesto = st.session_state["datos_rapidos"].get("Presupuesto", "No especificado")
     nombre_persona = st.session_state["datos_rapidos"].get("Nombre completo", "Estimado usuario")
 
+    # Contexto personalizado
     contexto = f"""
 Dirígete al usuario como **{nombre_persona}**.
 
@@ -184,6 +186,7 @@ El monto real del alquiler será definido por la administración una vez evaluad
 Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, de manera clara, amable y profesional.
 """
 
+    # Entrada de consulta del usuario
     pregunta = st.text_input("📩 ¿Alguna otra cosa que desee saber sobre el alquiler del inmueble?")
     if pregunta:
         try:
@@ -192,6 +195,8 @@ Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, 
             st.session_state["permite_formulario"] = True
         except Exception as e:
             st.error("❌ Error al obtener respuesta de Gemini.")
+            st.exception(e)
+
 ######################################################################################
 
 

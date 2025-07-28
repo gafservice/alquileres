@@ -57,8 +57,6 @@ if enviado_rapido:
     }
     st.success("✅ Puede consultar con Gemini o continuar al formulario completo")
 
-# 3️⃣ CHAT CON GEMINI
-
 
 # 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
@@ -125,16 +123,6 @@ Tu tarea es responder de forma amable, clara y profesional **únicamente pregunt
 
 # 3️⃣  fin INTERACCIÓN CON GEMINI
 
-
-
-    pregunta = st.text_input("¿Qué desea saber sobre la propiedad?")
-    if pregunta:
-        try:
-            respuesta = model.generate_content(contexto + "\n\n" + "Pregunta: " + pregunta)
-            st.success(respuesta.text)
-            st.session_state["permite_formulario"] = True
-        except Exception as e:
-            st.error("❌ Error al obtener respuesta de Gemini.")
 
 
 # 4️⃣ FORMULARIO FORMAL

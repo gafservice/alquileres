@@ -184,7 +184,7 @@ if st.session_state.get("permite_formulario", False):
         form_data["Consentimiento"] = st.checkbox("Información es verdadera", value=False)
         form_data["Consentimiento datos"] = st.checkbox("Autorizo verificación", value=False)
         enviar_formal = st.form_submit_button("Enviar solicitud formal")
-                if enviar_formal:
+        if enviar_formal:
             if not form_data.get("Consentimiento", False) or not form_data.get("Consentimiento datos", False):
                 st.warning("Debe aceptar ambas declaraciones para continuar.")
             else:

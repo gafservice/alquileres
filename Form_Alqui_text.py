@@ -55,6 +55,21 @@ if enviado_rapido:
         "Uso": uso,
         "Presupuesto": presupuesto
     }
+    try:
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+        client = gspread.authorize(creds)
+        sheet = client.open("Respuestas_Alquiler").worksheet("Contactos_Interesados")
+
+        sheet.append_row([nombre, celular, correo, uso, presupuesto, datetime.now(timezone("America/Costa_Rica")).strftime("%Y-%m-%d %H:%M:%S")])
+    except Exception as e:
+        st.error("❌ Error al guardar en hoja de Contactos_Interesados")
+        st.exception(e)
+
+
+
+    
     st.success("✅ Puede consultar con Gemini o continuar al formulario completo")
 
 

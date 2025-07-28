@@ -115,27 +115,27 @@ if enviar:
 
 # 6️⃣ CHAT CON GEMINI (SOLO SI HAY DATOS)
 # Pregunta del usuario (entrada para el modelo)
-pregunta_usuario = st.chat_input("📩 Escribí tu consulta sobre la propiedad")
+# 6️⃣ CHAT CON GEMINI (SOLO SI YA SE GUARDÓ EL CONTACTO)
+if st.session_state.get("contacto_guardado", False):
+    pregunta_usuario = st.chat_input("📩 Escribí tu consulta sobre la propiedad")
 
+    if pregunta_usuario:
+        try:
+            prompt_final = contexto_inicial + f"\n\nNombre: {nombre}\nTeléfono: {telefono}\nCorreo: {correo}\nTipo de uso: {uso}\n\nPregunta del usuario: {pregunta_usuario}"
+            respuesta = model.generate_content(prompt_final)
+            st.success(respuesta.text)
 
-if pregunta_usuario:
-    try:
-        prompt_final = contexto_inicial + f"\n\nNombre: {nombre}\nTeléfono: {telefono}\nCorreo: {correo}\nTipo de uso: {uso}\n\nPregunta del usuario: {pregunta_usuario}"
-        respuesta = model.generate_content(prompt_final)
-        st.success(respuesta.text)
+            # 👉 Invitación a llenar el formulario completo
+            st.markdown("---")
+            st.markdown("### 📄 ¿Deseás visitar el inmueble?")
+            st.info("Te recomendamos llenar el formulario principal para coordinar una visita y ser considerado como posible inquilino.")
 
-        # 👉 Invitación a llenar el formulario completo
-        st.markdown("---")
-        st.markdown("### 📄 ¿Deseás visitar el inmueble?")
-        st.info("Te recomendamos llenar el formulario principal para coordinar una visita y ser considerado como posible inquilino.")
+            if st.button("📝 Llenar formulario de visita"):
+                st.session_state["mostrar_formulario_completo"] = True
+                st.experimental_rerun()
 
-        if st.button("📝 Llenar formulario de visita"):
-            # Simular desplazamiento a la parte del formulario
-            st.write("<script>window.location.href='#enviar-solicitud'</script>", unsafe_allow_html=True)
-
-    except Exception as e:
-        st.error(f"❌ Error al llamar a Gemini: {e}")
-
+        except Exception as e:
+            st.error(f"❌ Error al llamar a Gemini: {e}")
 
 
 #####################################################

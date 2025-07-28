@@ -130,9 +130,11 @@ if st.session_state.get("contacto_guardado", False):
             st.markdown("### 📄 ¿Deseás visitar el inmueble?")
             st.info("Te recomendamos llenar el formulario principal para coordinar una visita y ser considerado como posible inquilino.")
 
-            if st.button("📝 Llenar formulario de visita"):
-                st.session_state["mostrar_formulario_completo"] = True
-                st.experimental_rerun()
+           if st.button("📝 Llenar formulario de visita"):
+               st.session_state["mostrar_formulario_completo"] = True
+               st.session_state["espera_antes_de_formulario"] = True
+               st.success("✅ Gracias. En un momento te mostramos el formulario completo...")
+               st.stop()  # 👉 evita que se borre la respuesta de Gemini de inmediato
 
         except Exception as e:
             st.error(f"❌ Error al llamar a Gemini: {e}")
@@ -248,6 +250,13 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
 
 
 ############################################################
+# Espera controlada antes de mostrar el formulario completo (para que no desaparezca el chat)
+if st.session_state.get("espera_antes_de_formulario", False):
+    del st.session_state["espera_antes_de_formulario"]
+    st.experimental_rerun()
+
+
+
 ############################################################
 if not st.session_state.get("mostrar_formulario_completo", False):
     st.stop()  # Detiene todo si aún no se debe mostrar el formulario largo

@@ -26,19 +26,15 @@ genai.configure(api_key=api_key)
 model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
 
 st.title("🤖 Chat con Gemini (Google) en Español")
-st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona, o solicitar más detalles sobre el proceso de alquiler:")
+st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o solicitar más detalles sobre el proceso de alquiler:")
 
 prompt = st.text_input("💬 Escribe tu pregunta:")
 
-# Crear conversación con contexto inicial en español
-chat = model.start_chat(
-    context="Eres un asistente experto en alquiler de propiedades en Costa Rica. Responde SIEMPRE en español, de forma clara, precisa y cordial. No respondas en inglés. Sé profesional y breve."
-)
-
 if prompt:
     try:
-        respuesta = chat.send_message(prompt)
-        st.success(respuesta.text)
+        prompt_es = f"Responde en español como un asistente inmobiliario profesional de Costa Rica. Pregunta del usuario: {prompt}"
+        response = model.generate_content(prompt_es)
+        st.success(response.text)
     except Exception as e:
         st.error(f"❌ Error al llamar a Gemini: {e}")
 

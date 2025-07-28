@@ -14,6 +14,9 @@ import os
 import google.generativeai as genai
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+if "historial_chat" not in st.session_state:
+    st.session_state["historial_chat"] = []
+
 st.title("Para uso: Habitacional / Comercial / Mixto")
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
@@ -116,7 +119,19 @@ if enviar:
 # 6️⃣ CHAT CON GEMINI (SOLO SI HAY DATOS)
 # Pregunta del usuario (entrada para el modelo)
 # 6️⃣ CHAT CON GEMINI (SOLO SI YA SE GUARDÓ EL CONTACTO)
+
+
+
 if st.session_state.get("contacto_guardado", False):
+# Mostrar historial de chat
+for entrada in st.session_state["historial_chat"]:
+    with st.chat_message("user"):
+        st.markdown(entrada["usuario"])
+    with st.chat_message("assistant"):
+        st.markdown(entrada["gemini"])
+
+
+    
     pregunta_usuario = st.chat_input("📩 Escribí tu consulta sobre la propiedad")
 
     if pregunta_usuario:

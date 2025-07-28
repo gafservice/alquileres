@@ -124,11 +124,11 @@ if enviar:
 
 if st.session_state.get("contacto_guardado", False):
 # Mostrar historial de chat
-for entrada in st.session_state["historial_chat"]:
-    with st.chat_message("user"):
-        st.markdown(entrada["usuario"])
-    with st.chat_message("assistant"):
-        st.markdown(entrada["gemini"])
+    for entrada in st.session_state["historial_chat"]:
+        with st.chat_message("user"):
+            st.markdown(entrada["usuario"])
+        with st.chat_message("assistant"):
+            st.markdown(entrada["gemini"])
 
 
     

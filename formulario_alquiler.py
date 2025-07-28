@@ -251,9 +251,7 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
 
 ############################################################
 # Espera controlada antes de mostrar el formulario completo (para que no desaparezca el chat)
-if st.session_state.get("espera_antes_de_formulario", False):
-    del st.session_state["espera_antes_de_formulario"]
-    st.experimental_rerun()
+
 
 
 
@@ -262,6 +260,12 @@ if not st.session_state.get("mostrar_formulario_completo", False):
     st.stop()  # Detiene todo si aún no se debe mostrar el formulario largo
 
 # Ahora sí se muestra el formulario largo
+
+if st.session_state.get("espera_antes_de_formulario", False):
+    del st.session_state["espera_antes_de_formulario"]
+    st.experimental_rerun()
+
+
 st.success("Gracias por su interés en esta propiedad. Nos gustaría saber más de usted...")
 
 

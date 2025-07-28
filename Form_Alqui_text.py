@@ -58,6 +58,8 @@ if enviado_rapido:
     st.success("✅ Puede consultar con Gemini o continuar al formulario completo")
 
 # 3️⃣ CHAT CON GEMINI
+
+
 # 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
@@ -76,27 +78,54 @@ if st.session_state.get("permite_chat", False):
     contexto = f"""
 Eres un asistente experto en alquiler de propiedades en Costa Rica.
 
-Esta es la propiedad que se está ofreciendo:
+Esta es la propiedad actualmente disponible para alquiler:
 
-📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso a servicios básicos.  
+📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso inmediato a servicios básicos y transporte.  
 🏠 Uso permitido: Habitacional, Comercial o Mixto.  
-🛋️ Características:  
-- 1 sala/comedor  
-- Cocina (sin electrodomésticos)  
-- 3 cuartos  
+
+🛋️ Características del inmueble:  
+- 1 sala / comedor  
+- 1 cocina (solo el área, sin electrodomésticos)  
+- 3 dormitorios  
 - 1 baño con agua caliente  
-- Cuarto de pilas (área de lavado)  
-- Parqueo para 1 vehículo  
-📡 Servicios disponibles: Electricidad, Agua potable, Internet, TV Kolbi, Agua caliente.
+- 1 cuarto de pilas (espacio de lavado, sin lavadora)  
+- Parqueo para 1 vehículo (si requiere más espacio, puede negociarse)  
+- Se permiten mascotas de forma responsable  
 
-💬 El usuario está interesado en alquilar esta propiedad. Su presupuesto estimado es: {presupuesto}
+📡 Servicios disponibles:  
+- Electricidad  
+- Agua potable  
+- Agua caliente  
+- Internet  
+- TV Kolbi  
 
-📞 Para más información directa, puede contactar a Alexander Araya:  
+💵 El presupuesto proporcionado por el usuario es: {presupuesto} colones mensuales.
+
+📅 Para **agendar una cita para visitar el lugar**, es necesario **llenar el formulario formal de solicitud**.
+
+📞 Para más información directa, el usuario puede contactar a **Alexander Araya**:  
 - Teléfono: 8715-5477  
-- Correo: info@vigias.net
+- Correo electrónico: info@vigias.net
 
-Responde exclusivamente preguntas relacionadas con esta propiedad de forma clara, amable y profesional.
+Tu tarea es responder de forma amable, clara y profesional **únicamente preguntas relacionadas con esta propiedad**.
 """
+
+    pregunta = st.text_input("📩 ¿Qué desea saber sobre la propiedad?")
+    if pregunta:
+        try:
+            respuesta = model.generate_content(contexto + "\n\n" + "Pregunta: " + pregunta)
+            st.success(respuesta.text)
+            st.session_state["permite_formulario"] = True
+        except Exception as e:
+            st.error("❌ Error al obtener respuesta de Gemini.")
+
+
+
+
+
+# 3️⃣  fin INTERACCIÓN CON GEMINI
+
+
 
     pregunta = st.text_input("¿Qué desea saber sobre la propiedad?")
     if pregunta:

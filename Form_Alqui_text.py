@@ -12,6 +12,59 @@ from streamlit_javascript import st_javascript
 import google.generativeai as genai
 import os
 
+# 🔍 Captura automática del navegador y entorno del visitante
+user_agent = st_javascript("""await navigator.userAgent""")
+idioma = st_javascript("""await navigator.language""")
+zona = st_javascript("""await Intl.DateTimeFormat().resolvedOptions().timeZone""")
+resolucion = st_javascript("""[window.screen.width, window.screen.height].join('x')""")
+
+# Guardar los valores capturados en session_state
+if idioma:
+    st.session_state["idioma_navegador"] = idioma
+if zona:
+    st.session_state["zona_horaria_navegador"] = zona
+if resolucion:
+    st.session_state["resolucion_pantalla"] = resolucion
+if user_agent:
+    st.session_state["tipo_dispositivo_raw"] = user_agent
+
+# 📝 Registrar una sola vez por sesión
+if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session_state:
+    st.session_state["registrado"] = True
+    try:
+        cr_tz = timezone("America/Costa_Rica")
+        hora_visita = datetime.now(cr_tz).strftime("%Y-%m-%d %H:%M:%S")
+
+        tipo_dispositivo_raw = st.session_state.get("tipo_dispositivo_raw", "Desconocido")
+        idioma = st.session_state.get("idioma_navegador", "Desconocido")
+        zona = st.session_state.get("zona_horaria_navegador", "Desconocida")
+        resolucion = st.session_state.get("resolucion_pantalla", "Desconocida")
+
+        # Conexión a Google Sheets
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+        client = gspread.authorize(creds)
+
+        hoja = client.open("Respuestas_Alquiler").worksheet("Visitas")
+        hoja.append_row([
+            hora_visita,
+            tipo_dispositivo_raw,
+            idioma,
+            zona,
+            resolucion
+        ])
+    except Exception as e:
+        st.warning("⚠️ No se pudo registrar la visita.")
+        st.exception(e)
+
+
+
+
+
+
+
+
 st.set_page_config(page_title="Alquiler de Propiedad - Higuito Centro", layout="centered")
 
 # 1️⃣ INFORMACIÓN

@@ -23,20 +23,35 @@ genai.configure(api_key=api_key)
 
 # Modelo correcto
 #model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
-model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
+# 📌 Contexto fijo de la propiedad para todas las respuestas de Gemini
+contexto_inicial = """
+Eres un asistente experto en alquiler de propiedades en Costa Rica.
+Esta es la propiedad que se está ofreciendo:
 
+- Ubicación: Frente al Palí, Higuito Centro, San José, Costa Rica.
+- Acceso: Cerca de todos los servicios básicos.
+- Uso permitido: Habitacional, Comercial o Mixto.
+- Características destacadas: Zona céntrica, bien ubicada, visible desde la calle principal.
+- Coordenadas en Google Maps: https://www.google.com/maps?q=9.86076,-84.05487
+- Video promocional: https://youtu.be/9U7l9rvnVJc
+
+Responde siempre en español y con amabilidad, como si hablaras con un posible inquilino interesado.
+"""
+
+# 🧠 Prompt del usuario
 st.title("🤖 Chat con Gemini (Google) en Español")
-st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o solicitar más detalles sobre el proceso de alquiler:")
+st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o el proceso de alquiler:")
 
-prompt = st.text_input("💬 Escribe tu pregunta:")
+pregunta_usuario = st.text_input("💬 Escribe tu pregunta:")
 
-if prompt:
+if pregunta_usuario:
     try:
-        prompt_es = f"Responde en español como un asistente inmobiliario profesional de Costa Rica. Pregunta del usuario: {prompt}"
-        response = model.generate_content(prompt_es)
-        st.success(response.text)
+        prompt_final = contexto_inicial + "\n\n" + f"Pregunta del usuario: {pregunta_usuario}"
+        respuesta = model.generate_content(prompt_final)
+        st.success(respuesta.text)
     except Exception as e:
         st.error(f"❌ Error al llamar a Gemini: {e}")
+
 
 
 

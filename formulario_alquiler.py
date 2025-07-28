@@ -25,20 +25,42 @@ except Exception as e:
     st.error(f"❌ No se pudo inicializar el modelo Gemini: {e}")
     st.stop()
 
-# 📌 Contexto fijo del inmueble
 contexto_inicial = """
-Eres un asistente experto en alquiler de propiedades en Costa Rica.
-Esta es la propiedad que se está ofreciendo:
+Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la propiedad disponible:
 
-- Ubicación: Frente al Palí, Higuito Centro, San José, Costa Rica.
-- Acceso: Cerca de todos los servicios básicos.
-- Uso permitido: Habitacional, Comercial o Mixto.
-- Características destacadas: Zona céntrica, bien ubicada, visible desde la calle principal.
-- Coordenadas en Google Maps: https://www.google.com/maps?q=9.86076,-84.05487
-- Video promocional: https://youtu.be/9U7l9rvnVJc
+📍 **Ubicación**:
+- Frente al Palí, Higuito Centro, San José, Costa Rica.
+- Zona céntrica, con acceso inmediato a servicios básicos y transporte.
+- Coordenadas de Google Maps: https://www.google.com/maps?q=9.86076,-84.05487
 
-Responde siempre en español y con amabilidad, como si hablaras con un posible inquilino interesado.
+🏠 **Uso permitido**:
+- Habitacional, Comercial o Mixto.
+
+🛋️ **Características del inmueble**:
+- 1 Sala / Comedor
+- 1 Cocina (solo el área, sin electrodomésticos)
+- 3 Dormitorios
+- 1 Baño con agua caliente
+- 1 Cuarto de Pilas (espacio para lavado, no incluye lavadora)
+- Espacio para 1 parqueo
+
+📡 **Servicios disponibles**:
+- Electricidad
+- Agua potable
+- Agua caliente
+- Internet
+- TV Kolbi
+
+🎥 **Video del inmueble**:
+- https://youtu.be/9U7l9rvnVJc
+
+🖼️ **Imágenes del inmueble**:
+- fachada1.jpg (Frente al Palí)
+- Carac.jpg (Zona céntrica)
+
+Tu tarea es responder en español, de manera amable, clara y útil como si estuvieras guiando a un inquilino interesado.
 """
+
 
 # 🧠 Interfaz del chat
 st.title("🤖 Chat con Gemini (Google) en Español")

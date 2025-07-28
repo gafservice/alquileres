@@ -11,6 +11,42 @@ import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
 from openai import OpenAI
 import os
+import google.generativeai as genai
+
+
+
+# Configurar API Key desde secrets
+api_key = st.secrets["generativeai"]["api_key"]
+genai.configure(api_key=api_key)
+
+# Crear modelo Gemini
+model = genai.GenerativeModel("gemini-pro")
+chat = model.start_chat()
+
+# Interfaz básica
+st.title("💬 Chat con Gemini (Google)")
+
+mensaje = st.text_input("Ingrese un mensaje para Gemini:")
+
+if mensaje:
+    try:
+        respuesta = chat.send_message(mensaje)
+        st.success(respuesta.text)
+    except Exception as e:
+        st.error(f"❌ Error al llamar a Gemini: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
 st.title("Para uso: Habitacional / Comercial / Mixto")

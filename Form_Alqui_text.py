@@ -127,10 +127,12 @@ if enviado_rapido:
 
 
 # 3️⃣ INTERACCIÓN CON GEMINI
-# 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
     st.header("🤖 Consultas sobre la Propiedad (Asistente Gemini)")
+
+    # 🔹 Nota institucional
+    st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS – Administración de Propiedades** para brindar información oficial sobre esta propiedad.")
 
     try:
         api_key = st.secrets["generativeai"]["api_key"]
@@ -143,11 +145,11 @@ if st.session_state.get("permite_chat", False):
     presupuesto = st.session_state["datos_rapidos"].get("Presupuesto", "No especificado")
 
     contexto = f"""
-Eres un asistente experto en alquiler de propiedades en Costa Rica.
+Eres un asistente de VIGIAS, empresa de implementaciones tecnológicas.
 
 Esta es la propiedad disponible para alquiler:
 
-📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso inmediato a servicios básicos y transporte.  
+📍 Ubicación: Frente al Palí, Higuito Centro,primera entrada Calle Llama del Bosque, zona céntrica con acceso inmediato a servicios básicos y transporte.  
 🏠 Uso permitido: Habitacional, Comercial o Mixto.  
 
 🛋️ Características del inmueble:  
@@ -179,7 +181,7 @@ El monto real del alquiler será definido por la administración una vez evaluad
 Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, de manera clara, amable y profesional.
 """
 
-    pregunta = st.text_input("📩 ¿Qué desea saber sobre la propiedad?")
+    pregunta = st.text_input("📩 ¿Alguna otra cosa que desee saber sobre el alquiler del inmueble?")
     if pregunta:
         try:
             respuesta = model.generate_content(contexto + "\n\n" + "Pregunta: " + pregunta)
@@ -188,8 +190,8 @@ Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, 
         except Exception as e:
             st.error("❌ Error al obtener respuesta de Gemini.")
 
-
 # 3️⃣  fin INTERACCIÓN CON GEMINI
+
 
 
 

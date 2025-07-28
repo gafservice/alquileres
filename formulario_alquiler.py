@@ -290,20 +290,7 @@ if st.session_state.get("permite_formulario", False):
                     except Exception as e:
                         st.error(f"❌ Error al guardar archivo adjunto: {e}")
         
-                         # ✅ Enviar correo
-                try:
-                    cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
-                    msg = EmailMessage()
-                    msg["Subject"] = "Nueva solicitud de alquiler"
-                    msg["From"] = "admin@vigias.net"
-                    msg["To"] = "admin@vigias.net"
-                    msg.set_content(cuerpo_admin)
-        
-                    correo_usuario = form_data.get("Correo electronico", "").strip()
-                    enviar_confirmacion = correo_usuario and "@" in correo_usuario
-        
-                    if enviar_confirmacion:
-                        cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+                         
 
                 
                 st.success("✅ ¡Formulario formal enviado con éxito!")

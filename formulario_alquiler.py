@@ -132,7 +132,7 @@ if st.session_state.get("permite_chat", False):
     st.header("🤖 Consultas sobre el inmueble")
 
     # 🔹 Nota institucional
-    st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS** para evacuar cualquier otra duda que se le presente.")
+    #st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS** para evacuar cualquier otra duda que se le presente.")
 
     try:
         api_key = st.secrets["generativeai"]["api_key"]

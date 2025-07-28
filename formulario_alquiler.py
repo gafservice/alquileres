@@ -22,7 +22,8 @@ api_key = st.secrets["generativeai"]["api_key"]
 genai.configure(api_key=api_key)
 
 # Modelo correcto
-model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
+#model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
+model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
 
 st.title("Chat con Gemini (Google)")
 prompt = st.text_input("Ingrese un mensaje para Gemini:")

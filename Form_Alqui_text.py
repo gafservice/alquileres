@@ -77,7 +77,7 @@ if st.session_state.get("permite_chat", False):
     contexto = f"""
 Eres un asistente experto en alquiler de propiedades en Costa Rica.
 
-Esta es la propiedad disponible:
+Esta es la propiedad disponible para alquiler:
 
 📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso inmediato a servicios básicos y transporte.  
 🏠 Uso permitido: Habitacional, Comercial o Mixto.  
@@ -98,16 +98,17 @@ Esta es la propiedad disponible:
 - Internet  
 - TV Kolbi  
 
-💬 El usuario ha indicado un presupuesto de **{presupuesto} colones mensuales**, es decir, cuánto estaría dispuesto a pagar mensualmente por el alquiler.  
-Actualmente, estamos evaluando diferentes propuestas. Si la información brindada nos resulta conveniente, nos pondremos en contacto.
+💰 El usuario ha indicado un presupuesto estimado de **{presupuesto} colones mensuales**.  
+**Este valor corresponde únicamente a una propuesta por parte del interesado, y no representa el monto oficial del alquiler.**  
+El monto real del alquiler será definido por la administración una vez evaluadas las solicitudes.
 
-📅 Importante: Para **agendar una cita para visitar la propiedad**, es necesario **llenar el formulario formal**.
+📅 Para **agendar una visita a la propiedad**, es indispensable **completar el formulario formal**.
 
-📞 Para más detalles, el contacto oficial es **Alexander Araya**:  
+📞 Para más información directa, el contacto autorizado es **Alexander Araya**:  
 - Teléfono: 8715-5477  
-- Correo: info@vigias.net
+- Correo electrónico: info@vigias.net
 
-Tu tarea es **responder únicamente preguntas sobre esta propiedad** de manera clara, amable y útil.
+Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, de manera clara, amable y profesional.
 """
 
     pregunta = st.text_input("📩 ¿Qué desea saber sobre la propiedad?")
@@ -118,9 +119,6 @@ Tu tarea es **responder únicamente preguntas sobre esta propiedad** de manera c
             st.session_state["permite_formulario"] = True
         except Exception as e:
             st.error("❌ Error al obtener respuesta de Gemini.")
-
-
-
 
 
 # 3️⃣  fin INTERACCIÓN CON GEMINI

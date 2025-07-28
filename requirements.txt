@@ -4,7 +4,8 @@ gspread
 oauth2client
 streamlit-js-eval
 streamlit-javascript
-openai>=1.0.0
+pip install google-generativeai
+google-generativeai>=0.3.2
 python-dotenv
 requests
 

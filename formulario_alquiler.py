@@ -14,9 +14,6 @@ import os
 import google.generativeai as genai
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
-if "historial_chat" not in st.session_state:
-    st.session_state["historial_chat"] = []
-
 st.title("Para uso: Habitacional / Comercial / Mixto")
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
@@ -32,23 +29,17 @@ st.video("https://youtu.be/9U7l9rvnVJc")
 
 ############################################################
 
-import streamlit as st
-import gspread
-import json
-import google.generativeai as genai
-from oauth2client.service_account import ServiceAccountCredentials
-
-# 1️⃣ CONFIGURACIÓN API Y GEMINI
+# Cargar API Key desde secrets
 api_key = st.secrets["generativeai"]["api_key"]
 genai.configure(api_key=api_key)
 
+# ✅ Inicializar el modelo (asegúrate de que esta línea se ejecute antes de usar `model`)
 try:
     model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
 except Exception as e:
     st.error(f"❌ No se pudo inicializar el modelo Gemini: {e}")
     st.stop()
 
-# 2️⃣ CONTEXTO PARA EL MODELO
 contexto_inicial = """
 Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la propiedad disponible:
 
@@ -82,83 +73,23 @@ Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la p
 - fachada1.jpg (Frente al Palí)
 - Carac.jpg (Zona céntrica)
 
-Antes de brindar más información, primero debes preguntar al usuario su nombre, teléfono, correo electrónico y tipo de uso (habitacional, comercial o mixto). Guarda estos datos.
+Tu tarea es responder en español, de manera amable, clara y útil como si estuvieras guiando a un inquilino interesado.
 """
 
-# 3️⃣ UI GENERAL
+
+# 🧠 Interfaz del chat
 st.title("🤖 Chat con Gemini (Google) en Español")
-st.markdown("### 🤝 ¿Desea más información?")
+st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o el proceso de alquiler:")
 
-# 4️⃣ FORMULARIO INICIAL
-with st.form("formulario_contacto"):
-    nombre = st.text_input("👤 Nombre completo")
-    telefono = st.text_input("📱 Teléfono (preferiblemente WhatsApp)")
-    correo = st.text_input("✉️ Correo electrónico")
-    uso = st.radio("🏠 Tipo de uso", ["Habitacional", "Comercial", "Mixto"])
-    enviar = st.form_submit_button("Solicitar más información")
+pregunta_usuario = st.text_input("💬 Escribe tu pregunta:")
 
-# 5️⃣ GUARDAR EN GOOGLE SHEETS
-if enviar:
-    if not (nombre and telefono and correo and uso):
-        st.warning("Por favor, complete todos los campos antes de continuar.")
-    else:
-        try:
-            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-            creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
-            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-            client = gspread.authorize(creds)
-            libro = client.open("Respuestas_Alquiler")
-            hoja = libro.worksheet("Contactos_Interesados")
-            hoja.append_row([nombre, telefono, correo, uso])
-            st.success("✅ Información enviada correctamente. Podés continuar con el chat.")
-            st.session_state["contacto_guardado"] = True
-        except Exception as e:
-            st.error(f"❌ Error al guardar en Google Sheets: {e}")
-            st.stop()
-
-# 6️⃣ CHAT CON GEMINI (SOLO SI HAY DATOS)
-# Pregunta del usuario (entrada para el modelo)
-# 6️⃣ CHAT CON GEMINI (SOLO SI YA SE GUARDÓ EL CONTACTO)
-
-
-
-if st.session_state.get("contacto_guardado", False):
-# Mostrar historial de chat
-    for entrada in st.session_state["historial_chat"]:
-        with st.chat_message("user"):
-            st.markdown(entrada["usuario"])
-        with st.chat_message("assistant"):
-            st.markdown(entrada["gemini"])
-
-
-    
-    pregunta_usuario = st.chat_input("📩 Escribí tu consulta sobre la propiedad")
-
-    if pregunta_usuario:
-        try:
-            nombre = st.session_state.get("nombre", nombre)
-            telefono = st.session_state.get("telefono", telefono)
-            correo = st.session_state.get("correo", correo)
-            uso = st.session_state.get("uso", uso)
-
-            prompt_final = contexto_inicial + f"\n\nNombre: {nombre}\nTeléfono: {telefono}\nCorreo: {correo}\nTipo de uso: {uso}\n\nPregunta del usuario: {pregunta_usuario}"
-            respuesta = model.generate_content(prompt_final)
-            st.success(respuesta.text)
-
-            # 👉 Invitación a llenar el formulario completo
-            st.markdown("---")
-            st.markdown("### 📄 ¿Deseás visitar el inmueble?")
-            st.info("Te recomendamos llenar el formulario principal para coordinar una visita y ser considerado como posible inquilino.")
-
-            if st.button("📝 Llenar formulario de visita"):
-                st.session_state["mostrar_formulario_completo"] = True
-                st.session_state["espera_antes_de_formulario"] = True
-                st.success("✅ Gracias. En un momento te mostramos el formulario completo...")
-                st.stop()
-
-        except Exception as e:
-            st.error(f"❌ Error al llamar a Gemini: {e}")
-
+if pregunta_usuario:
+    try:
+        prompt_final = contexto_inicial + "\n\n" + f"Pregunta del usuario: {pregunta_usuario}"
+        respuesta = model.generate_content(prompt_final)
+        st.success(respuesta.text)
+    except Exception as e:
+        st.error(f"❌ Error al llamar a Gemini: {e}")
 
 
 #####################################################
@@ -271,25 +202,9 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
 
 
 ############################################################
-# Espera controlada antes de mostrar el formulario completo (para que no desaparezca el chat)
-
-
-
-
 ############################################################
-if not st.session_state.get("mostrar_formulario_completo", False):
-    st.stop()  # Detiene todo si aún no se debe mostrar el formulario largo
 
-# Ahora sí se muestra el formulario largo
-
-if st.session_state.get("espera_antes_de_formulario", False):
-    del st.session_state["espera_antes_de_formulario"]
-    st.experimental_rerun()
-
-
-st.success("Gracias por su interés en esta propiedad. Nos gustaría saber más de usted...")
-
-
+st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidades como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles.")
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")
@@ -335,9 +250,6 @@ form_data["Observaciones"] = st.text_area("Observaciones adicionales")
 archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
 form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera", value=False)
 form_data["Consentimiento datos"] = st.checkbox("Autorizo su verificación.", value=False)
-
-st.markdown("<div id='enviar-solicitud'></div>", unsafe_allow_html=True)
-
 if st.button("Enviar solicitud"):
     if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:
         st.error("Debe aceptar ambas declaraciones para continuar.")

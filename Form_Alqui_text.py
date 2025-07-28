@@ -9,7 +9,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
-from openai import OpenAI
 import os
 import google.generativeai as genai
 

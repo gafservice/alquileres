@@ -317,7 +317,7 @@ Administración de Propiedades
                         server.send_message(msg)
                         if enviar_confirmacion:
                             server.send_message(confirmacion)
-
+                   st.success("✅ ¡Formulario formal enviado con éxito!")
                 except Exception as e:
                     st.error(f"❌ Error al enviar correo: {e}")
 

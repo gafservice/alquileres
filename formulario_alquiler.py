@@ -225,7 +225,7 @@ if st.session_state.get("permite_formulario", False):
             form_data["Permisos municipales"] = st.radio("Permisos municipales", ["Sí", "No"])
             form_data["Pemisos Ministerio de Salud"] = st.radio("Permisos de Salud", ["Sí", "No"])
 
-        st.header("🔒 Final")
+        st.header("🔒 Datos Generales")
         form_data["Vehículos"] = st.text_input("¿Tiene vehículo?")
         form_data["Correo electrónico"] = st.text_input("Correo electrónico")
         form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes?")

@@ -113,7 +113,135 @@ if st.session_state.get("permite_formulario", False):
     # Usa un bloque `with st.form("formulario_formal"):` si querés que sea un formulario controlado.
     st.info("Formulario completo para evaluación de alquiler. Por favor llene todos los campos requeridos.")
 
-    # (👉 Aquí insertás el formulario extenso que ya tenés: uso, datos personales, historial, etc.)
+    with st.form("formulario_formal"):
+    uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
+    form_data = {}
+
+    if uso in ["Uso habitacional", "Uso mixto"]:
+        st.header("🏠 Sección: Uso Habitacional")
+        form_data["Nombre completo"] = st.text_input("Nombre completo")
+        form_data["Número de cédula o pasaporte"] = st.text_input("Número de cédula o pasaporte")
+        form_data["Profesión u ocupación"] = st.text_input("Profesión u ocupación")
+        form_data["Número de teléfono"] = st.text_input("Número de teléfono")
+        form_data["Cantidad de personas"] = st.number_input("¿Cuántas personas vivirán en la casa?", min_value=1, step=1)
+        form_data["Relación entre personas"] = st.text_area("¿Relación entre las personas que vivirán ahí?")
+        form_data["Niños y edades"] = st.text_area("¿Hay niños? ¿Qué edades?")
+        form_data["Mascotas"] = st.text_area("¿Tiene mascotas? (tipo, cantidad, tamaño)")
+
+    if uso in ["Uso comercial", "Uso mixto"]:
+        st.header("🏢 Sección: Uso Comercial")
+        form_data["Nombre Administrador"] = st.text_input("Nombre Administrador")
+        form_data["Cédula Administrador"] = st.text_input("Cédula Administrador")
+        form_data["Nombre del negocio"] = st.text_input("Nombre del negocio o emprendimiento")
+        form_data["Tipo de actividad"] = st.text_input("Tipo de actividad comercial")
+        form_data["Horario"] = st.text_input("Horario de funcionamiento")
+        form_data["Clientes en el lugar"] = st.radio("¿Recibirá clientes en el lugar?", ["Sí", "No"])
+        form_data["Empleados"] = st.number_input("¿Cuántos empleados trabajarán ahí?", min_value=0, step=1)
+        form_data["Redes o web"] = st.text_input("Sitio web o redes sociales del negocio")
+        form_data["Permisos municipales"] = st.radio("¿Cuenta con permisos municipales?", ["Sí", "No"])
+        form_data["Pemisos Ministerio de Salud"] = st.radio("¿Cuenta con permisos del Ministerio de Salud?", ["Sí", "No"])
+
+    st.header("🔒 Sección Final")
+    form_data["Vehículos"] = st.text_input("¿Tiene vehículo? ¿Cuántos?")
+    form_data["Correo electronico"] = st.text_input("Correo electrónico")
+    form_data["Historial alquiler"] = st.text_area("¿Ha alquilado antes? ¿Dónde? ¿Por qué dejó ese lugar?")
+    form_data["Propietario anterior"] = st.text_input("Nombre y contacto del propietario anterior")
+    form_data["Fiador"] = st.radio("¿Cuenta con fiador con propiedad en Costa Rica?", ["Sí", "No"])
+    form_data["Firma ante Abogado"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
+    form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
+    form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
+                                           ["El inquilino", "El propietario", "A convenir entre ambas partes"])
+    form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
+    form_data["Observaciones"] = st.text_area("Observaciones adicionales")
+    archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
+    form_data["Consentimiento"] = st.checkbox("Declaro que la información proporcionada es verdadera", value=False)
+    form_data["Consentimiento datos"] = st.checkbox("Autorizo su verificación.", value=False)
+
+    enviar_formal = st.form_submit_button("Enviar solicitud formal")
+
+if enviar_formal:
+    if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:
+        st.error("❌ Debe aceptar ambas declaraciones para continuar.")
+    else:
+        form_data["Tipo de uso"] = uso
+        hora_local = datetime.now(timezone("America/Costa_Rica"))
+        form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
+
+        columnas = [
+            "Tipo de uso", "Nombre completo", "Número de cédula o pasaporte", "Profesión u ocupación", "Número de teléfono",
+            "Cantidad de personas", "Relación entre personas", "Niños y edades", "Mascotas",
+            "Nombre Administrador", "Cédula Administrador", "Nombre del negocio", "Tipo de actividad", "Horario",
+            "Clientes en el lugar", "Empleados", "Redes o web", "Permisos municipales", "Pemisos Ministerio de Salud",
+            "Vehículos", "Correo electronico", "Historial alquiler", "Propietario anterior",
+            "Fiador", "Firma ante Abogado", "Depósito inicial", "Pago servicios", "Monto alquiler estimado",
+            "Observaciones", "Consentimiento", "Consentimiento datos", "Fecha de envío"
+        ]
+
+        datos_ordenados = {col: form_data.get(col, "") for col in columnas}
+        df = pd.DataFrame([datos_ordenados])
+        nombre_csv = "Respuestas_Alquiler.csv"
+        df.to_csv(nombre_csv, mode='a', index=False, header=not os.path.exists(nombre_csv))
+
+        try:
+            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+            credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+            client = gspread.authorize(creds)
+            sheet = client.open("Respuestas_Alquiler").worksheet("Formulario_Completo")
+            sheet.append_row([datos_ordenados[col] for col in columnas])
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
+        try:
+            cuerpo_admin = "\n".join([f"{k}: {v}" for k, v in datos_ordenados.items()])
+            msg = EmailMessage()
+            msg["Subject"] = "Nueva solicitud de alquiler"
+            msg["From"] = "admin@vigias.net"
+            msg["To"] = "admin@vigias.net"
+            msg.set_content(cuerpo_admin)
+
+            correo_usuario = form_data.get("Correo electronico", "").strip()
+            if correo_usuario and "@" in correo_usuario:
+                msg_usr = EmailMessage()
+                msg_usr["Subject"] = "Confirmación de solicitud de alquiler"
+                msg_usr["From"] = "admin@vigias.net"
+                msg_usr["To"] = correo_usuario
+                msg_usr.set_content(f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+
+Hemos recibido su solicitud de alquiler con la siguiente información:
+----------------------------------
+{cuerpo_admin}
+----------------------------------
+Nos pondremos en contacto pronto.
+
+Atentamente,
+Administración de Propiedades
+""")
+
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls()
+                    server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                    server.send_message(msg)
+                    server.send_message(msg_usr)
+            else:
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls()
+                    server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                    server.send_message(msg)
+        except Exception as e:
+            st.error(f"❌ Error al enviar correo: {e}")
+
+        if archivo:
+            try:
+                nombre_archivo = f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}"
+                with open(nombre_archivo, "wb") as f:
+                    f.write(archivo.read())
+                st.success(f"📎 Archivo guardado exitosamente: {nombre_archivo}")
+            except Exception as e:
+                st.error(f"❌ Error al guardar archivo adjunto: {e}")
+
+        st.success("✅ ¡Formulario enviado con éxito!")
+        st.info("Si desea generar un sistema similar, contáctenos a: info@vigias.net")
 
     st.markdown("⚠️ [Sección del formulario formal aquí...]")
 

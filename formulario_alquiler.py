@@ -249,8 +249,13 @@ if "registrado" not in st.session_state and "tipo_dispositivo_raw" in st.session
 
 ############################################################
 ############################################################
+if not st.session_state.get("mostrar_formulario_completo", False):
+    st.stop()  # Detiene todo si aún no se debe mostrar el formulario largo
 
-st.success("Gracias por su interés en esta propiedad. Nos gustaria saber mas de usted y sus necesidades como inquilino. Para lo cual hemos preparado este pequeño formulario. Al llenar el formulario por completo y enviarlo usted quedara en la lista de posibles elegibles.")
+# Ahora sí se muestra el formulario largo
+st.success("Gracias por su interés en esta propiedad. Nos gustaría saber más de usted...")
+
+
 
 st.markdown("### ⚠️ Nota de Confidencialidad y Verificación de Información")
 st.info("La información proporcionada en este formulario será tratada con estricta confidencialidad conforme a la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales. Los datos se utilizarán únicamente para la evaluación de su solicitud de alquiler. No se compartirán con terceros ni se almacenarán más allá del propósito indicado, salvo que usted lo autorice expresamente. En caso de no concretarse el contrato, los datos serán eliminados de forma segura.\n\n")

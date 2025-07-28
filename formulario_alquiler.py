@@ -131,10 +131,10 @@ if st.session_state.get("contacto_guardado", False):
             st.info("Te recomendamos llenar el formulario principal para coordinar una visita y ser considerado como posible inquilino.")
 
            if st.button("📝 Llenar formulario de visita"):
-    st.session_state["mostrar_formulario_completo"] = True
-    st.session_state["espera_antes_de_formulario"] = True
-    st.success("✅ Gracias. En un momento te mostramos el formulario completo...")
-    st.stop()
+                st.session_state["mostrar_formulario_completo"] = True
+                st.session_state["espera_antes_de_formulario"] = True
+                st.success("✅ Gracias. En un momento te mostramos el formulario completo...")
+                st.stop()
 
         except Exception as e:
             st.error(f"❌ Error al llamar a Gemini: {e}")

@@ -125,7 +125,7 @@ if enviado_rapido:
     
     st.success("✅ Puede consultar con Gemini o continuar al formulario completo")
 
-
+#################################################################
 # 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
@@ -143,13 +143,16 @@ if st.session_state.get("permite_chat", False):
         st.stop()
 
     presupuesto = st.session_state["datos_rapidos"].get("Presupuesto", "No especificado")
+    nombre_persona = st.session_state["datos_rapidos"].get("Nombre completo", "Estimado usuario")
 
     contexto = f"""
+Dirígete al usuario como **{nombre_persona}**.
+
 Eres un asistente de VIGIAS, empresa de implementaciones tecnológicas.
 
 Esta es la propiedad disponible para alquiler:
 
-📍 Ubicación: Frente al Palí, Higuito Centro,primera entrada Calle Llama del Bosque, zona céntrica con acceso inmediato a servicios básicos y transporte.  
+📍 Ubicación: Frente al Palí, Higuito Centro, primera entrada Calle Llama del Bosque, zona céntrica con acceso inmediato a servicios básicos y transporte.  
 🏠 Uso permitido: Habitacional, Comercial o Mixto.  
 
 🛋️ Características del inmueble:  
@@ -189,8 +192,7 @@ Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, 
             st.session_state["permite_formulario"] = True
         except Exception as e:
             st.error("❌ Error al obtener respuesta de Gemini.")
-
-# 3️⃣  fin INTERACCIÓN CON GEMINI
+######################################################################################
 
 
 

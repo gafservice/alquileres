@@ -129,10 +129,10 @@ if enviado_rapido:
 # 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
-    st.header("🤖 Consultas sobre la Propiedad (Asistente Gemini)")
+    st.header("🤖 Consultas sobre el inmueble")
 
     # 🔹 Nota institucional
-    st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS – Administración de Propiedades** para brindar información oficial sobre esta propiedad.")
+    st.info("🛡️ Este asistente ha sido habilitado por **VIGIAS** para evacuar cualquier otra duda que se le presente.")
 
     try:
         api_key = st.secrets["generativeai"]["api_key"]

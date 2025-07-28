@@ -150,7 +150,7 @@ if st.session_state.get("permite_formulario", False):
     form_data["Firma ante Abogado"] = st.radio("¿Acepta firmar contrato ante Abogado?", ["Sí", "No"])
     form_data["Depósito inicial"] = st.radio("¿Acepta entregar depósito de garantía y primer mes adelantado?", ["Sí", "No"])
     form_data["Pago servicios"] = st.radio("¿Quién se encargará del pago de los servicios públicos?",
-                                               ["El inquilino", "El propietario", "A convenir entre ambas partes"])
+                                           ["El inquilino", "El propietario", "A convenir entre ambas partes"])
     form_data["Monto alquiler estimado"] = st.text_input("¿Cuánto estaría dispuesto a pagar por el alquiler mensual?")
     form_data["Observaciones"] = st.text_area("Observaciones adicionales")
     archivo = st.file_uploader("Opcional: Adjunte foto, referencia o documento", type=["png", "jpg", "jpeg", "pdf"])
@@ -158,6 +158,7 @@ if st.session_state.get("permite_formulario", False):
     form_data["Consentimiento datos"] = st.checkbox("Autorizo su verificación.", value=False)
 
     enviar_formal = st.form_submit_button("Enviar solicitud formal")
+
 
 if enviar_formal:
     if not form_data["Consentimiento"] or not form_data["Consentimiento datos"]:

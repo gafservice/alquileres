@@ -29,17 +29,23 @@ st.video("https://youtu.be/9U7l9rvnVJc")
 
 ############################################################
 
-# Cargar API Key desde secrets
+import streamlit as st
+import gspread
+import json
+import google.generativeai as genai
+from oauth2client.service_account import ServiceAccountCredentials
+
+# 1️⃣ CONFIGURACIÓN API Y GEMINI
 api_key = st.secrets["generativeai"]["api_key"]
 genai.configure(api_key=api_key)
 
-# ✅ Inicializar el modelo (asegúrate de que esta línea se ejecute antes de usar `model`)
 try:
     model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
 except Exception as e:
     st.error(f"❌ No se pudo inicializar el modelo Gemini: {e}")
     st.stop()
 
+# 2️⃣ CONTEXTO PARA EL MODELO
 contexto_inicial = """
 Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la propiedad disponible:
 
@@ -73,23 +79,63 @@ Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la p
 - fachada1.jpg (Frente al Palí)
 - Carac.jpg (Zona céntrica)
 
-Tu tarea es responder en español, de manera amable, clara y útil como si estuvieras guiando a un inquilino interesado.
+Antes de brindar más información, primero debes preguntar al usuario su nombre, teléfono, correo electrónico y tipo de uso (habitacional, comercial o mixto). Guarda estos datos.
 """
 
-
-# 🧠 Interfaz del chat
+# 3️⃣ UI GENERAL
 st.title("🤖 Chat con Gemini (Google) en Español")
-st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o el proceso de alquiler:")
+st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios básicos", use_container_width=True)
+st.image("Carac.jpg", caption="Zona céntrica frente al Palí", use_container_width=True)
 
-pregunta_usuario = st.text_input("💬 Escribe tu pregunta:")
+st.markdown("### 📍 Ubicación del inmueble")
+st.components.v1.iframe(
+    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d245.67975692153937!2d-84.05487347043625!3d9.86076000110528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scr!4v1752880163707!5m2!1ses-419!2scr",
+    height=450,
+    width=600
+)
 
-if pregunta_usuario:
-    try:
-        prompt_final = contexto_inicial + "\n\n" + f"Pregunta del usuario: {pregunta_usuario}"
-        respuesta = model.generate_content(prompt_final)
-        st.success(respuesta.text)
-    except Exception as e:
-        st.error(f"❌ Error al llamar a Gemini: {e}")
+st.video("https://youtu.be/9U7l9rvnVJc")
+st.markdown("### 🤝 ¿Desea más información?")
+
+# 4️⃣ FORMULARIO INICIAL
+with st.form("formulario_contacto"):
+    nombre = st.text_input("👤 Nombre completo")
+    telefono = st.text_input("📱 Teléfono (preferiblemente WhatsApp)")
+    correo = st.text_input("✉️ Correo electrónico")
+    uso = st.radio("🏠 Tipo de uso", ["Habitacional", "Comercial", "Mixto"])
+    enviar = st.form_submit_button("Solicitar más información")
+
+# 5️⃣ GUARDAR EN GOOGLE SHEETS
+if enviar:
+    if not (nombre and telefono and correo and uso):
+        st.warning("Por favor, complete todos los campos antes de continuar.")
+    else:
+        try:
+            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+            creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+            client = gspread.authorize(creds)
+            libro = client.open("Respuestas_Alquiler")
+            hoja = libro.worksheet("Contactos_Interesados")
+            hoja.append_row([nombre, telefono, correo, uso])
+            st.success("✅ Información enviada correctamente. Podés continuar con el chat.")
+            st.session_state["contacto_guardado"] = True
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+            st.stop()
+
+# 6️⃣ CHAT CON GEMINI (SOLO SI HAY DATOS)
+if st.session_state.get("contacto_guardado", False):
+    pregunta_usuario = st.text_input("💬 Escribe tu pregunta:")
+
+    if pregunta_usuario:
+        try:
+            prompt_final = contexto_inicial + f"\n\nNombre: {nombre}\nTeléfono: {telefono}\nCorreo: {correo}\nTipo de uso: {uso}\n\nPregunta del usuario: {pregunta_usuario}"
+            respuesta = model.generate_content(prompt_final)
+            st.success(respuesta.text)
+        except Exception as e:
+            st.error(f"❌ Error al llamar a Gemini: {e}")
+
 
 
 #####################################################

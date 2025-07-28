@@ -9,12 +9,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pytz import timezone
 import streamlit.components.v1 as components
 from streamlit_javascript import st_javascript
-from openai import OpenAI
-import os
-import google.generativeai as genai
+
 
 st.set_page_config(page_title="INFORMACIÓN GENERAL", layout="centered")
+############################################################
 st.title("Para uso: Habitacional / Comercial / Mixto")
+
 st.image("fachada1.jpg", caption="Frente al Palí, Higuito Centro, con acceso a todos los servicios basicos", use_container_width=True)
 st.image("Carac.jpg", caption="Frente al Palí, Higuito Centro, un lugar centrico", use_container_width=True)
 
@@ -28,68 +28,6 @@ st.components.v1.iframe(
 st.video("https://youtu.be/9U7l9rvnVJc")
 
 ############################################################
-
-# Cargar API Key desde secrets
-api_key = st.secrets["generativeai"]["api_key"]
-genai.configure(api_key=api_key)
-
-# ✅ Inicializar el modelo (asegúrate de que esta línea se ejecute antes de usar `model`)
-try:
-    model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
-except Exception as e:
-    st.error(f"❌ No se pudo inicializar el modelo Gemini: {e}")
-    st.stop()
-
-contexto_inicial = """
-Eres un asistente experto en alquiler de propiedades en Costa Rica. Esta es la propiedad disponible:
-
-📍 **Ubicación**:
-- Frente al Palí, Higuito Centro, San José, Costa Rica.
-- Zona céntrica, con acceso inmediato a servicios básicos y transporte.
-- Coordenadas de Google Maps: https://www.google.com/maps?q=9.86076,-84.05487
-
-🏠 **Uso permitido**:
-- Habitacional, Comercial o Mixto.
-
-🛋️ **Características del inmueble**:
-- 1 Sala / Comedor
-- 1 Cocina (solo el área, sin electrodomésticos)
-- 3 Dormitorios
-- 1 Baño con agua caliente
-- 1 Cuarto de Pilas (espacio para lavado, no incluye lavadora)
-- Espacio para 1 parqueo
-
-📡 **Servicios disponibles**:
-- Electricidad
-- Agua potable
-- Agua caliente
-- Internet
-- TV Kolbi
-
-🎥 **Video del inmueble**:
-- https://youtu.be/9U7l9rvnVJc
-
-🖼️ **Imágenes del inmueble**:
-- fachada1.jpg (Frente al Palí)
-- Carac.jpg (Zona céntrica)
-
-Tu tarea es responder en español, de manera amable, clara y útil como si estuvieras guiando a un inquilino interesado.
-"""
-
-
-# 🧠 Interfaz del chat
-st.title("🤖 Chat con Gemini (Google) en Español")
-st.markdown("Puedes hacer preguntas relacionadas con el inmueble, la zona o el proceso de alquiler:")
-
-pregunta_usuario = st.text_input("💬 Escribe tu pregunta:")
-
-if pregunta_usuario:
-    try:
-        prompt_final = contexto_inicial + "\n\n" + f"Pregunta del usuario: {pregunta_usuario}"
-        respuesta = model.generate_content(prompt_final)
-        st.success(respuesta.text)
-    except Exception as e:
-        st.error(f"❌ Error al llamar a Gemini: {e}")
 
 
 #####################################################

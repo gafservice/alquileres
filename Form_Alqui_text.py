@@ -59,6 +59,7 @@ if enviado_rapido:
 
 
 # 3️⃣ INTERACCIÓN CON GEMINI
+# 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
     st.header("🤖 Consultas sobre la Propiedad (Asistente Gemini)")
@@ -76,7 +77,7 @@ if st.session_state.get("permite_chat", False):
     contexto = f"""
 Eres un asistente experto en alquiler de propiedades en Costa Rica.
 
-Esta es la propiedad actualmente disponible para alquiler:
+Esta es la propiedad disponible:
 
 📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso inmediato a servicios básicos y transporte.  
 🏠 Uso permitido: Habitacional, Comercial o Mixto.  
@@ -87,8 +88,8 @@ Esta es la propiedad actualmente disponible para alquiler:
 - 3 dormitorios  
 - 1 baño con agua caliente  
 - 1 cuarto de pilas (espacio de lavado, sin lavadora)  
-- Parqueo para 1 vehículo (si requiere más espacio, puede negociarse)  
-- Se permiten mascotas de forma responsable  
+- Parqueo para 1 vehículo (si requiere más, puede negociarse)  
+- Se permiten mascotas bajo tenencia responsable  
 
 📡 Servicios disponibles:  
 - Electricidad  
@@ -97,15 +98,16 @@ Esta es la propiedad actualmente disponible para alquiler:
 - Internet  
 - TV Kolbi  
 
-💵 El presupuesto proporcionado por el usuario es: {presupuesto} colones mensuales.
+💬 El usuario ha indicado un presupuesto de **{presupuesto} colones mensuales**, es decir, cuánto estaría dispuesto a pagar mensualmente por el alquiler.  
+Actualmente, estamos evaluando diferentes propuestas. Si la información brindada nos resulta conveniente, nos pondremos en contacto.
 
-📅 Para **agendar una cita para visitar el lugar**, es necesario **llenar el formulario formal de solicitud**.
+📅 Importante: Para **agendar una cita para visitar la propiedad**, es necesario **llenar el formulario formal**.
 
-📞 Para más información directa, el usuario puede contactar a **Alexander Araya**:  
+📞 Para más detalles, el contacto oficial es **Alexander Araya**:  
 - Teléfono: 8715-5477  
-- Correo electrónico: info@vigias.net
+- Correo: info@vigias.net
 
-Tu tarea es responder de forma amable, clara y profesional **únicamente preguntas relacionadas con esta propiedad**.
+Tu tarea es **responder únicamente preguntas sobre esta propiedad** de manera clara, amable y útil.
 """
 
     pregunta = st.text_input("📩 ¿Qué desea saber sobre la propiedad?")

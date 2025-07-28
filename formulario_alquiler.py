@@ -280,22 +280,20 @@ if st.session_state.get("permite_formulario", False):
                     st.error("❌ Error al guardar en Google Sheets")
                     st.exception(e)
 
-        # ✅ Enviar correo
-        try:
-            cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
-            msg = EmailMessage()
-            msg["Subject"] = "Nueva solicitud de alquiler"
-            msg["From"] = "admin@vigias.net"
-            msg["To"] = "admin@vigias.net"
-            msg.set_content(cuerpo_admin)
+# ✅ Enviar correo
+try:
+    cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
+    msg = EmailMessage()
+    msg["Subject"] = "Nueva solicitud de alquiler"
+    msg["From"] = "admin@vigias.net"
+    msg["To"] = "admin@vigias.net"
+    msg.set_content(cuerpo_admin)
 
-            correo_usuario = form_data.get("Correo electronico", "").strip()
-            enviar_confirmacion = correo_usuario and "@" in correo_usuario
+    correo_usuario = form_data.get("Correo electronico", "").strip()
+    enviar_confirmacion = correo_usuario and "@" in correo_usuario
 
-            if enviar_confirmacion:
-                cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
-
-
+    if enviar_confirmacion:
+        cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
 
 
 Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
@@ -308,30 +306,18 @@ Gracias por confiar en nosotros.
 Atentamente,
 Administración de Propiedades
 """
-                confirmacion = EmailMessage()
-                confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
-                confirmacion["From"] = "admin@vigias.net"
-                confirmacion["To"] = correo_usuario
-                confirmacion.set_content(cuerpo_usuario)
+        confirmacion = EmailMessage()
+        confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
+        confirmacion["From"] = "admin@vigias.net"
+        confirmacion["To"] = correo_usuario
+        confirmacion.set_content(cuerpo_usuario)
 
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
-                server.send_message(msg)
-                if enviar_confirmacion:
-                    server.send_message(confirmacion)
-                except Exception as e:
-            st.error(f"❌ Error al enviar correo: {e}")
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+        server.send_message(msg)
+        if enviar_confirmacion:
+            server.send_message(confirmacion)
 
-        # 📎 Guardar archivo adjunto si existe
-        if archivo:
-            try:
-                nombre_archivo = f"archivo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{archivo.name}"
-                with open(nombre_archivo, "wb") as f:
-                    f.write(archivo.read())
-                st.success(f"📎 Archivo guardado exitosamente: {nombre_archivo}")
-            except Exception as e:
-                st.error(f"❌ Error al guardar archivo adjunto: {e}")
-
-        # ✅ Mensaje final
-        st.success("✅ ¡Formulario formal enviado con éxito!")
+except Exception as e:
+    st.error(f"❌ Error al enviar correo: {e}")

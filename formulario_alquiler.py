@@ -125,6 +125,10 @@ if enviar:
             st.stop()
 
 # 6️⃣ CHAT CON GEMINI (SOLO SI HAY DATOS)
+# Pregunta del usuario (entrada para el modelo)
+pregunta_usuario = st.chat_input("📩 Escribí tu consulta sobre la propiedad")
+
+
 if pregunta_usuario:
     try:
         prompt_final = contexto_inicial + f"\n\nNombre: {nombre}\nTeléfono: {telefono}\nCorreo: {correo}\nTipo de uso: {uso}\n\nPregunta del usuario: {pregunta_usuario}"

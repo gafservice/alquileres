@@ -114,7 +114,7 @@ if st.session_state.get("permite_formulario", False):
     st.info("Formulario completo para evaluación de alquiler. Por favor llene todos los campos requeridos.")
 
     with st.form("formulario_formal"):
-    uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
+        uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
     form_data = {}
 
     if uso in ["Uso habitacional", "Uso mixto"]:

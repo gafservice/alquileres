@@ -15,29 +15,24 @@ import google.generativeai as genai
 
 
 
-# Configurar API Key desde secrets
+
+
+# Cargar la clave de API desde secrets
 api_key = st.secrets["generativeai"]["api_key"]
 genai.configure(api_key=api_key)
 
-# Crear modelo Gemini
-model = genai.GenerativeModel("gemini-pro")
-chat = model.start_chat()
+# Modelo correcto
+model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
 
-# Interfaz básica
-st.title("💬 Chat con Gemini (Google)")
+st.title("Chat con Gemini (Google)")
+prompt = st.text_input("Ingrese un mensaje para Gemini:")
 
-mensaje = st.text_input("Ingrese un mensaje para Gemini:")
-
-if mensaje:
+if prompt:
     try:
-        respuesta = chat.send_message(mensaje)
-        st.success(respuesta.text)
+        response = model.generate_content(prompt)
+        st.success(response.text)
     except Exception as e:
         st.error(f"❌ Error al llamar a Gemini: {e}")
-
-
-
-
 
 
 

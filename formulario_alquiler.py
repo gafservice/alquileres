@@ -193,10 +193,6 @@ Tu tarea es responder exclusivamente preguntas relacionadas con esta propiedad, 
         except Exception as e:
             st.error("❌ Error al obtener respuesta de Gemini.")
 ######################################################################################
-
-
-
-
 # 4️⃣ FORMULARIO FORMAL
 if st.session_state.get("permite_formulario", False):
     st.markdown("---")
@@ -204,6 +200,7 @@ if st.session_state.get("permite_formulario", False):
     with st.form("formulario_formal"):
         uso = st.radio("¿Para qué desea alquilar la propiedad?", ["Uso habitacional", "Uso comercial", "Uso mixto"])
         form_data = {}
+
         if uso in ["Uso habitacional", "Uso mixto"]:
             st.header("🏠 Sección: Uso Habitacional")
             form_data["Nombre completo"] = st.text_input("Nombre completo")
@@ -214,6 +211,7 @@ if st.session_state.get("permite_formulario", False):
             form_data["Relación entre personas"] = st.text_area("Relación entre las personas")
             form_data["Niños y edades"] = st.text_area("¿Hay niños? ¿Qué edades?")
             form_data["Mascotas"] = st.text_area("¿Tiene mascotas?")
+
         if uso in ["Uso comercial", "Uso mixto"]:
             st.header("🏢 Sección: Uso Comercial")
             form_data["Nombre Administrador"] = st.text_input("Nombre Administrador")
@@ -226,6 +224,7 @@ if st.session_state.get("permite_formulario", False):
             form_data["Redes o web"] = st.text_input("Sitio web o redes sociales")
             form_data["Permisos municipales"] = st.radio("Permisos municipales", ["Sí", "No"])
             form_data["Pemisos Ministerio de Salud"] = st.radio("Permisos de Salud", ["Sí", "No"])
+
         st.header("🔒 Final")
         form_data["Vehículos"] = st.text_input("¿Tiene vehículo?")
         form_data["Correo electrónico"] = st.text_input("Correo electrónico")
@@ -240,76 +239,61 @@ if st.session_state.get("permite_formulario", False):
         archivo = st.file_uploader("Adjunte documento", type=["pdf", "jpg"])
         form_data["Consentimiento"] = st.checkbox("Información es verdadera", value=False)
         form_data["Consentimiento datos"] = st.checkbox("Autorizo verificación", value=False)
+
         enviar_formal = st.form_submit_button("Enviar solicitud formal")
-if enviar_formal:
-    if not form_data.get("Consentimiento", False) or not form_data.get("Consentimiento datos", False):
-        ...
-    else:
-        ...
-        try:
-            # Guardar en Google Sheets
-            ...
-        except Exception as e:
-            ...
-        
-        # ✅ Enviar correo (UBICAR AQUÍ)
-        try:
-            cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
-            msg = EmailMessage()
-            msg["Subject"] = "Nueva solicitud de alquiler"
-            msg["From"] = "admin@vigias.net"
-            msg["To"] = "admin@vigias.net"
-            msg.set_content(cuerpo_admin)
 
-            correo_usuario = form_data.get("Correo electrónico", "").strip()
-            enviar_confirmacion = correo_usuario and "@" in correo_usuario
+        if enviar_formal:
+            if not form_data.get("Consentimiento", False) or not form_data.get("Consentimiento datos", False):
+                st.warning("Debe aceptar ambas declaraciones para continuar.")
+            else:
+                # 🕓 Fecha
+                from datetime import datetime
+                from pytz import timezone
+                cr_tz = timezone("America/Costa_Rica")
+                hora_local = datetime.now(cr_tz)
+                form_data["Tipo de uso"] = uso
+                form_data["Fecha de envío"] = hora_local.strftime("%Y-%m-%d %H:%M:%S")
 
-            if enviar_confirmacion:
-                cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
+                # ✅ Guardar en CSV
+                import os
+                import pandas as pd
+                columnas_ordenadas = list(form_data.keys())
+                df = pd.DataFrame([form_data])
+                archivo_csv = "Respuestas_Alquiler.csv"
+                existe = os.path.exists(archivo_csv)
+                df.to_csv(archivo_csv, mode='a', index=False, header=not existe)
 
+                # ✅ Guardar en Google Sheets
+                try:
+                    import json, gspread
+                    from oauth2client.service_account import ServiceAccountCredentials
+                    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+                    credentials_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"]["json_keyfile"])
+                    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+                    client = gspread.authorize(creds)
+                    sheet = client.open("Respuestas_Alquiler").worksheet("Formulario_Completo")
+                    sheet.append_row([form_data.get(k, "") for k in columnas_ordenadas])
+                except Exception as e:
+                    st.error("❌ Error al guardar en Google Sheets")
+                    st.exception(e)
 
-Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
-Resumen de su envío:
-----------------------------------
-{cuerpo_admin}
-----------------------------------
-Gracias por confiar en nosotros.
+                # ✅ Enviar correo
+                try:
+                    import smtplib
+                    from email.message import EmailMessage
 
-Atentamente,
-Administración de Propiedades
-"""
-                confirmacion = EmailMessage()
-                confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
-                confirmacion["From"] = "admin@vigias.net"
-                confirmacion["To"] = correo_usuario
-                confirmacion.set_content(cuerpo_usuario)
+                    cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
+                    msg = EmailMessage()
+                    msg["Subject"] = "Nueva solicitud de alquiler"
+                    msg["From"] = "admin@vigias.net"
+                    msg["To"] = "admin@vigias.net"
+                    msg.set_content(cuerpo_admin)
 
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
-                server.send_message(msg)
-                if enviar_confirmacion:
-                    server.send_message(confirmacion)
+                    correo_usuario = form_data.get("Correo electrónico", "").strip()
+                    enviar_confirmacion = correo_usuario and "@" in correo_usuario
 
-        except Exception as e:
-            st.error(f"❌ Error al enviar correo: {e}")
-
-
-# ✅ Enviar correo
-try:
-    cuerpo_admin = "\n".join([f"{k}: {str(v)}" for k, v in form_data.items()])
-    msg = EmailMessage()
-    msg["Subject"] = "Nueva solicitud de alquiler"
-    msg["From"] = "admin@vigias.net"
-    msg["To"] = "admin@vigias.net"
-    msg.set_content(cuerpo_admin)
-
-    correo_usuario = form_data.get("Correo electronico", "").strip()
-    enviar_confirmacion = correo_usuario and "@" in correo_usuario
-
-    if enviar_confirmacion:
-        cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
-
+                    if enviar_confirmacion:
+                        cuerpo_usuario = f"""Estimado/a {form_data.get("Nombre completo", "interesado/a")},
 
 Hemos recibido correctamente su solicitud de alquiler enviada a través del formulario.
 Resumen de su envío:
@@ -321,18 +305,21 @@ Gracias por confiar en nosotros.
 Atentamente,
 Administración de Propiedades
 """
-        confirmacion = EmailMessage()
-        confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
-        confirmacion["From"] = "admin@vigias.net"
-        confirmacion["To"] = correo_usuario
-        confirmacion.set_content(cuerpo_usuario)
+                        confirmacion = EmailMessage()
+                        confirmacion["Subject"] = "Confirmación de solicitud de alquiler"
+                        confirmacion["From"] = "admin@vigias.net"
+                        confirmacion["To"] = correo_usuario
+                        confirmacion.set_content(cuerpo_usuario)
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
-        server.starttls()
-        server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
-        server.send_message(msg)
-        if enviar_confirmacion:
-            server.send_message(confirmacion)
+                    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                        server.starttls()
+                        server.login("admin@vigias.net", "ymsezpxetvlgdhvq")
+                        server.send_message(msg)
+                        if enviar_confirmacion:
+                            server.send_message(confirmacion)
 
-except Exception as e:
-    st.error(f"❌ Error al enviar correo: {e}")
+                except Exception as e:
+                    st.error(f"❌ Error al enviar correo: {e}")
+
+
+

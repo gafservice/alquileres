@@ -58,25 +58,55 @@ if enviado_rapido:
     st.success("✅ Puede consultar con Gemini o continuar al formulario completo")
 
 # 3️⃣ CHAT CON GEMINI
+# 3️⃣ INTERACCIÓN CON GEMINI
 if st.session_state.get("permite_chat", False):
     st.markdown("---")
-    st.header("🤖 Chat con Gemini")
+    st.header("🤖 Consultas sobre la Propiedad (Asistente Gemini)")
+
     try:
         api_key = st.secrets["generativeai"]["api_key"]
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
     except Exception as e:
-        st.error("No se pudo inicializar Gemini")
+        st.error("❌ No se pudo inicializar Gemini.")
         st.stop()
-    contexto = f"""Usuario interesado en alquiler en Higuito Centro. Uso: {uso}, Presupuesto: {presupuesto}"""
-    pregunta = st.text_input("¿Qué desea saber?")
+
+    presupuesto = st.session_state["datos_rapidos"].get("Presupuesto", "No especificado")
+
+    contexto = f"""
+Eres un asistente experto en alquiler de propiedades en Costa Rica.
+
+Esta es la propiedad que se está ofreciendo:
+
+📍 Ubicación: Frente al Palí, Higuito Centro, zona céntrica con acceso a servicios básicos.  
+🏠 Uso permitido: Habitacional, Comercial o Mixto.  
+🛋️ Características:  
+- 1 sala/comedor  
+- Cocina (sin electrodomésticos)  
+- 3 cuartos  
+- 1 baño con agua caliente  
+- Cuarto de pilas (área de lavado)  
+- Parqueo para 1 vehículo  
+📡 Servicios disponibles: Electricidad, Agua potable, Internet, TV Kolbi, Agua caliente.
+
+💬 El usuario está interesado en alquilar esta propiedad. Su presupuesto estimado es: {presupuesto}
+
+📞 Para más información directa, puede contactar a Alexander Araya:  
+- Teléfono: 8715-5477  
+- Correo: info@vigias.net
+
+Responde exclusivamente preguntas relacionadas con esta propiedad de forma clara, amable y profesional.
+"""
+
+    pregunta = st.text_input("¿Qué desea saber sobre la propiedad?")
     if pregunta:
         try:
-            respuesta = model.generate_content(contexto + "\n\n" + pregunta)
+            respuesta = model.generate_content(contexto + "\n\n" + "Pregunta: " + pregunta)
             st.success(respuesta.text)
             st.session_state["permite_formulario"] = True
-        except:
-            st.warning("Error al consultar con Gemini.")
+        except Exception as e:
+            st.error("❌ Error al obtener respuesta de Gemini.")
+
 
 # 4️⃣ FORMULARIO FORMAL
 if st.session_state.get("permite_formulario", False):

@@ -91,7 +91,7 @@ with st.expander("📋 Ver características del inmueble"):
 
 # 2️⃣ FORMULARIO RÁPIDO
 st.markdown("---")
-st.header("📨 Solicitud Rápida de Interés")
+st.header("📨 Solicitud Rápida de información")
 with st.form("formulario_rapido"):
     nombre = st.text_input("Nombre completo")
     celular = st.text_input("Número de teléfono")

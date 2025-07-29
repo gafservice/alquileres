@@ -171,9 +171,9 @@ Esta es la propiedad disponible para alquiler:
 - Internet  
 - TV Kolbi  
 
-💰 El usuario ha indicado un presupuesto estimado de **{presupuesto} colones mensuales**.  
-**Este valor corresponde únicamente a una propuesta por parte del interesado, y no representa el monto oficial del alquiler.**  
-El monto real del alquiler será definido por la administración una vez evaluadas las solicitudes.
+💰 El monto por concepto  del alquiler es de **₡330,000 colones mensuales**.  
+Este valor ya ha sido establecido por la administración de la propiedad.  
+Cualquier otro monto indicado por los interesados se considerará como una propuesta, pero no modificará el valor base de alquiler.  
 
 📅 Para **agendar una visita a la propiedad**, es indispensable **completar el formulario formal**.
 

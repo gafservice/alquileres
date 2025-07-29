@@ -171,9 +171,11 @@ Esta es la propiedad disponible para alquiler:
 - Internet  
 - TV Kolbi  
 
-💰 El monto por concepto  del alquiler es de **₡330,000 colones mensuales**.  
+💰 El monto por concepto  del alquiler es de **₡330,000 colones mensuales*, siempre que sea para uso habitacional.
 Este valor ya ha sido establecido por la administración de la propiedad.  
 Cualquier otro monto indicado por los interesados se considerará como una propuesta, pero no modificará el valor base de alquiler.  
+
+Si el uso es para fines comercial o mixto , el monto mensual varia, se debe negociar.
 
 📅 Para **agendar una visita a la propiedad**, es indispensable **completar el formulario formal**.
 
